@@ -3,66 +3,68 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import java.util.concurrent.Executor
+import com.example.wfmarket.helpers.ApiBuilder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+
+const val TAG:String = "Print"
+
+private lateinit var emailTextView:TextView
+private lateinit var passwordTextView:TextView
+private lateinit var loginButton:Button
+private lateinit var skipButton: Button
+private lateinit var apiView: TextView
+private lateinit var mainMenu:Intent
 
 
 class MainActivity : AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        val policy = ThreadPolicy.Builder().permitAll().build()
-        StrictMode.setThreadPolicy(policy)
-        val foundEmail: String = findViewById<Button>(R.id.loginButton).text.toString()
-        Log.i("Print", "Found email to be = $foundEmail")
-        findViewById<Button>(R.id.loginButton).setOnClickListener(loginButtonClicked())
-        val skipButton = findViewById<Button>(R.id.skipLoginButton)
-        skipButton.setOnClickListener(skipLoginButtonClicked(skipButton))
+        StrictMode.setThreadPolicy(ThreadPolicy.Builder().permitAll().build())
+        setupParams()
     }
 
     private fun loginButtonClicked(): View.OnClickListener {
         return View.OnClickListener {
-            var text:String = findViewById<EditText>(R.id.emailTextBox).text.toString()
-            var password:String = findViewById<EditText>(R.id.passwordTextBox).text.toString()
-            //Attempt to login to warframe marketplace
-            Log.i("Print", "Email: $text")
+            //var email:String = emailTextView.text.toString()
+
+            //Coroutine: Update button, send request, open main menu, update button
+            GlobalScope.launch(Dispatchers.IO) {
+                this@MainActivity.runOnUiThread(java.lang.Runnable { loginButton.text = "Loading" })
+                val response = ApiBuilder().executeRequest("https://api.warframe.market/v1/items")
+                this@MainActivity.runOnUiThread(java.lang.Runnable { apiView.text = response })
+                Thread.sleep(3000)
+                startActivity(mainMenu)
+                Thread.sleep(1000)
+                this@MainActivity.runOnUiThread(java.lang.Runnable { apiView.text = "" })
+                this@MainActivity.runOnUiThread(java.lang.Runnable { loginButton.text = "Login?" })
+            }
         }
     }
 
-    private fun skipLoginButtonClicked(skipButton: Button): View.OnClickListener {
+    private fun skipLoginButtonClicked(): View.OnClickListener {
         return View.OnClickListener {
-            skipButton.text = "Loading..."
-            val exec:Exec = Exec()
-            exec.execute(executeRequest("Skip", skipButton))
-
+            startActivity(mainMenu)
         }
     }
 
-    private fun executeRequest(text: String, button: Button): Runnable {
-        return Runnable {
-            //val response = ApiBuilder().executeRequest("https://api.warframe.market/v1/items")
-            //Log.i("Print", "Response = $response")
-            val intent = Intent(this, MainMenu::class.java)
-            startActivity(intent)
-            Thread.sleep(1_000)
-            button.text = text
-        }
+    private fun setupParams() {
+        mainMenu = Intent(this, MainMenu::class.java)
+        emailTextView = findViewById(R.id.emailTextBox)
+        passwordTextView = findViewById(R.id.passwordTextBox)
+        loginButton = findViewById(R.id.loginButton)
+        loginButton.setOnClickListener(loginButtonClicked())
+        skipButton = findViewById(R.id.skipLoginButton)
+        skipButton.setOnClickListener(skipLoginButtonClicked())
+        apiView = findViewById(R.id.apiView)
     }
-
-
-
-    class Exec : Executor {
-        override fun execute(command: Runnable) {
-            Thread(command).start()
-        }
-    }
-
-
 }
 
 

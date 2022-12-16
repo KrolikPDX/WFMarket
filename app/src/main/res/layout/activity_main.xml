@@ -67,15 +67,26 @@
 
     <Button
         android:id="@+id/skipLoginButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="#0077242E"
+        android:layout_width="151dp"
+        android:layout_height="80dp"
+        android:background="#222339"
         android:text="Skip"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/loginButton"
-        app:layout_constraintVertical_bias="0.144" />
+        app:layout_constraintVertical_bias="0.077" />
+
+    <TextView
+        android:id="@+id/apiView"
+        android:layout_width="295dp"
+        android:layout_height="99dp"
+        android:text="Empty"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/skipLoginButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

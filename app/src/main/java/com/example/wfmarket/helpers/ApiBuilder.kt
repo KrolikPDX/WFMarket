@@ -1,4 +1,4 @@
-package com.example.wfmarket
+package com.example.wfmarket.helpers
 
 import okhttp3.*
 
@@ -9,6 +9,7 @@ public class ApiBuilder {
         val request: Request = Request.Builder()
             .url(url)
             .build()
-        return client.newCall(request).execute().body?.string() ?: ""
+        val response = client.newCall(request).execute()
+        return response.body?.string() ?: ""
     }
 }
