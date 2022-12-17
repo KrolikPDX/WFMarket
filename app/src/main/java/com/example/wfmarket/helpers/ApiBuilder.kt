@@ -1,15 +1,32 @@
 package com.example.wfmarket.helpers
 
 import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
 
 
 public class ApiBuilder {
-    public fun executeRequest(url: String): String {
-        val client = OkHttpClient()
-        val request: Request = Request.Builder()
+    private val client:OkHttpClient = OkHttpClient()
+    private var request:Request.Builder = Request.Builder()
+    private val json = "application/json; charset=utf-8".toMediaTypeOrNull()
+
+    fun setupPostRequest(url: String, body: String) {
+        var requestBody = FormBody.Builder()
+
+        addHeader("Content-Type", "application/json")
+        addHeader("Accept", "application/json")
+        request.post(requestBody.build())
             .url(url)
+            .post(body.toRequestBody(json))
             .build()
-        val response = client.newCall(request).execute()
+    }
+
+    fun executeRequest():String {
+        val response = client.newCall(request.build()).execute()
         return response.body?.string() ?: ""
+    }
+
+    fun addHeader(name:String, value:String) {
+        request.addHeader(name, value)
     }
 }
