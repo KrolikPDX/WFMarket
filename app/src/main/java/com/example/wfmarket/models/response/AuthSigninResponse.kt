@@ -1,7 +1,4 @@
 package com.example.wfmarket.models.response
-import com.beust.klaxon.Klaxon
-
-private val klaxon = Klaxon()
 
 data class AuthSigninResponse (
     val payload: Payload
