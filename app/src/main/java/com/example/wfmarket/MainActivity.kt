@@ -10,9 +10,8 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.wfmarket.helpers.ApiBuilder
 import com.example.wfmarket.models.payloads.AuthSigninPayload
-import com.example.wfmarket.models.response.authSigninResponse
+import com.example.wfmarket.models.response.AuthSigninResponse
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -46,17 +45,17 @@ class MainActivity : AppCompatActivity(){
             //Coroutine: Update button, send request, open main menu, update button
             GlobalScope.launch(Dispatchers.IO) {
                 this@MainActivity.runOnUiThread(java.lang.Runnable { loginButton.text = "Loading" })
-                //val loginBody = mutableMapOf("email" to "josephd8888@hotmail.com", "password" to "JosephD8888")
                 val authSigninPayload = AuthSigninPayload("josephd8888@hotmail.com", "JosephD8888")
                 val payload = Gson().toJson(authSigninPayload)
                 apiBuilder.setupPostRequest(authUrl, payload)
                 apiBuilder.addHeader("authorization", jwtToken)
-                val response = apiBuilder.executeRequest()
-                //val authSigninResponse = authSigninResponse.fromJson(response)
-                Log.i(TAG, response)
+                val rawResponse = apiBuilder.executeRequest()
+                val parsedResponse:AuthSigninResponse = Gson().fromJson(rawResponse, AuthSigninResponse::class.java)
+                Log.i(TAG, "Parsed = ${parsedResponse.payload.user.id}")
 
 
-                this@MainActivity.runOnUiThread(java.lang.Runnable { apiView.text = response })
+
+                this@MainActivity.runOnUiThread(java.lang.Runnable { apiView.text = rawResponse })
                 //this@MainActivity.runOnUiThread(java.lang.Runnable { apiView.text = authSigninResponse!!.payload.user.id })
                 Thread.sleep(3000)
                 //startActivity(mainMenu)
