@@ -5,13 +5,15 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 
 
-public class ApiBuilder {
-    private val client:OkHttpClient = OkHttpClient()
-    private var request:Request.Builder = Request.Builder()
+class ApiBuilder {
     private val json = "application/json; charset=utf-8".toMediaTypeOrNull()
 
+    private var client:OkHttpClient = OkHttpClient()
+    private var request:Request.Builder = Request.Builder()
+    private lateinit var response:Response
+
     fun setupPostRequest(url: String, body: String) {
-        var requestBody = FormBody.Builder()
+        val requestBody = FormBody.Builder()
 
         addHeader("Content-Type", "application/json")
         addHeader("Accept", "application/json")
@@ -19,12 +21,15 @@ public class ApiBuilder {
             .url(url)
             .post(body.toRequestBody(json))
             .build()
-        val body = body
     }
 
     fun executeRequest():String {
-        val response = client.newCall(request.build()).execute()
+        response = client.newCall(request.build()).execute()
         return response.body?.string() ?: ""
+    }
+
+    fun requestExecutedSuccess(): Boolean {
+        return response.isSuccessful
     }
 
     fun addHeader(name:String, value:String) {

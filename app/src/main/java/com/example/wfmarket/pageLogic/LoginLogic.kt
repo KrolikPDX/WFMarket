@@ -5,7 +5,6 @@ import android.content.SharedPreferences.Editor
 import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -51,19 +50,26 @@ class LoginLogic : AppCompatActivity(){
         return View.OnClickListener {
             GlobalScope.launch(Dispatchers.IO) {
                 changeButtonText(loginButton, "Loading")
-                val authSigninPayload = AuthSigninPayload("josephd8888@hotmail.com", "JosephD8888")
-                val payload = Gson().toJson(authSigninPayload)
+                //Change to pull data from
+                var authSigninPayload = AuthSigninPayload(emailTextView.text.toString(), passwordTextView.text.toString())
+                var payload = Gson().toJson(authSigninPayload)
                 apiBuilder.setupPostRequest(authUrl, payload)
                 apiBuilder.addHeader("authorization", jwtToken)
 
-                val rawResponse = apiBuilder.executeRequest()
-                changeViewText(apiView, rawResponse)
-                prefEditor.putString("AuthSigninResponse", rawResponse).commit()
-
-                startActivity(mainMenu)
+                var rawResponse = apiBuilder.executeRequest()
+                if (apiBuilder.requestExecutedSuccess()) {
+                    changeViewText(apiView, rawResponse)
+                    prefEditor.putString("AuthSigninResponse", rawResponse).commit()
+                    startActivity(mainMenu)
+                    Thread.sleep(1000)
+                    changeViewText(apiView)
+                } else {
+                    Thread.sleep(1000)
+                    changeViewText(apiView, "Login failed!")
+                }
                 Thread.sleep(1000)
-                changeViewText(apiView)
                 changeButtonText(loginButton, "Login")
+                changeViewText(apiView)
             }
         }
     }
