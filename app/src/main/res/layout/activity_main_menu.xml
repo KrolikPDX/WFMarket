@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#292A3A"
-    tools:context=".MainActivity">
+    tools:context=".pageLogic.MainMenu">
 
     <TextView
         android:id="@+id/textView"

@@ -19,6 +19,7 @@ public class ApiBuilder {
             .url(url)
             .post(body.toRequestBody(json))
             .build()
+        val body = body
     }
 
     fun executeRequest():String {

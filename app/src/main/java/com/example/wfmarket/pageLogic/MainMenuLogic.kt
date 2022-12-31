@@ -1,4 +1,4 @@
-package com.example.wfmarket
+package com.example.wfmarket.pageLogic
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.example.wfmarket.R
 import com.example.wfmarket.models.response.AuthSigninResponse
 import com.example.wfmarket.models.response.User
 import com.google.gson.Gson
@@ -26,13 +27,12 @@ class MainMenu: AppCompatActivity(){
 
     private fun backButtonClicked(): View.OnClickListener {
         return View.OnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
             finish()
         }
     }
 
     private fun setupParams() {
-        var authSigningResponse:String? = null
+        var authSigningResponse:String?
         try {
             authSigningResponse = preferences.getString("AuthSigninResponse", "")
             user = Gson().fromJson(authSigningResponse, AuthSigninResponse::class.java).payload.user

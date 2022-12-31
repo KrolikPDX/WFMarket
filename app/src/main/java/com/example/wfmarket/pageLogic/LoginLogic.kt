@@ -1,14 +1,16 @@
-package com.example.wfmarket
+package com.example.wfmarket.pageLogic
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
 import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.example.wfmarket.R
 import com.example.wfmarket.helpers.ApiBuilder
 import com.example.wfmarket.models.payloads.AuthSigninPayload
 import com.google.gson.Gson
@@ -34,32 +36,44 @@ private lateinit var mainMenu:Intent
 
 
 
-class MainActivity : AppCompatActivity(){
+class LoginLogic : AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        StrictMode.setThreadPolicy(ThreadPolicy.Builder().permitAll().build())
+        setContentView(R.layout.activity_login)
+        StrictMode.setThreadPolicy(ThreadPolicy.Builder().permitAll().build()) //Enable internet usage
         setup()
+        if (preferences.getString("AuthSigninResponse", "")?.isEmpty() != true) {
+            startActivity(mainMenu)
+        }
     }
 
     private fun loginButtonClicked(): View.OnClickListener {
         return View.OnClickListener {
-            //Coroutine: Update button, send request, open main menu, update button
             GlobalScope.launch(Dispatchers.IO) {
-                this@MainActivity.runOnUiThread(java.lang.Runnable { loginButton.text = "Loading" })
+                changeButtonText(loginButton, "Loading")
                 val authSigninPayload = AuthSigninPayload("josephd8888@hotmail.com", "JosephD8888")
                 val payload = Gson().toJson(authSigninPayload)
                 apiBuilder.setupPostRequest(authUrl, payload)
                 apiBuilder.addHeader("authorization", jwtToken)
+
                 val rawResponse = apiBuilder.executeRequest()
+                changeViewText(apiView, rawResponse)
                 prefEditor.putString("AuthSigninResponse", rawResponse).commit()
 
                 startActivity(mainMenu)
                 Thread.sleep(1000)
-                this@MainActivity.runOnUiThread(java.lang.Runnable { apiView.text = "" })
-                this@MainActivity.runOnUiThread(java.lang.Runnable { loginButton.text = "Login" })
+                changeViewText(apiView)
+                changeButtonText(loginButton, "Login")
             }
         }
+    }
+
+    private fun changeViewText (textView: TextView, text:String = "") {
+        this@LoginLogic.runOnUiThread(java.lang.Runnable { textView.text = text})
+    }
+
+    private fun changeButtonText(button:Button, text:String = "") {
+        this@LoginLogic.runOnUiThread(java.lang.Runnable { button.text = text})
     }
 
     private fun skipLoginButtonClicked(): View.OnClickListener {
@@ -71,6 +85,7 @@ class MainActivity : AppCompatActivity(){
     private fun setup() {
         preferences = getPreferences(MODE_PRIVATE)
         prefEditor = preferences.edit()
+        prefEditor.clear().commit() //Clear any saved data
 
         mainMenu = Intent(this, MainMenu::class.java)
         emailTextView = findViewById(R.id.emailTextBox)
