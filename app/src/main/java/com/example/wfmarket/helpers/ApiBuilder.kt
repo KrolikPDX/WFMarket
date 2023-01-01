@@ -1,5 +1,7 @@
 package com.example.wfmarket.helpers
 
+import android.util.Log
+import com.example.wfmarket.pageLogic.TAG
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -9,16 +11,12 @@ class ApiBuilder {
     private val json = "application/json; charset=utf-8".toMediaTypeOrNull()
 
     private var client:OkHttpClient = OkHttpClient()
-    private var request:Request.Builder = Request.Builder()
+    private lateinit var request:Request.Builder
     private lateinit var response:Response
 
     fun setupPostRequest(url: String, body: String) {
-        val requestBody = FormBody.Builder()
-
-        addHeader("Content-Type", "application/json")
-        addHeader("Accept", "application/json")
-        request.post(requestBody.build())
-            .url(url)
+        request = Request.Builder() //Prevents duplication
+        request.url(url)
             .post(body.toRequestBody(json))
             .build()
     }

@@ -26,7 +26,7 @@
         android:layout_height="64dp"
         android:ems="10"
         android:hint="Email"
-        android:text="josephd8888@hotmail.com"
+        android:text="josephd8888@hotmail.co"
         android:inputType="textEmailAddress"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

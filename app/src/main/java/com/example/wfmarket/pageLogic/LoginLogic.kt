@@ -5,6 +5,7 @@ import android.content.SharedPreferences.Editor
 import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -17,10 +18,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-
 const val TAG:String = "Print"
 const val authUrl:String = "https://api.warframe.market/v1/auth/signin"
-const val jwtToken = "JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWQiOiJmWTVNb2xLNjJ3REVQa0tJdkdySmdHWFpzVXpYOW5hVCIsImNzcmZfdG9rZW4iOiJkM2IzOWZmNzNlZTZkMDQ1MjExOGU0ZjI2NjlkNWEzYmNkNTVmZTMzIiwiZXhwIjoxNjc2NDQwNzQ1LCJpYXQiOjE2NzEyNTY3NDUsImlzcyI6Imp3dCIsImF1ZCI6Imp3dCIsImF1dGhfdHlwZSI6ImNvb2tpZSIsInNlY3VyZSI6dHJ1ZSwibG9naW5fdWEiOiJiJ01vemlsbGEvNS4wIChNYWNpbnRvc2g7IEludGVsIE1hYyBPUyBYIDEwXzE1XzcpIEFwcGxlV2ViS2l0LzUzNy4zNiAoS0hUTUwsIGxpa2UgR2Vja28pIENocm9tZS8xMDguMC4wLjAgU2FmYXJpLzUzNy4zNiciLCJsb2dpbl9pcCI6ImInMjYwMToxYzI6NTAwMjo1NDA6OGRlNDpiMDk0OjY3OTg6MjdlNiciLCJqd3RfaWRlbnRpdHkiOiIzMTd1U3lobXdTdFlxVFNiWlpoM2tRd1JkTDdrQ0J3eiJ9.d0rdvgwNX5pPRLjSpMJn28tLOuvCuIK3wZxa6VOWQtQ"
+//eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWQiOiJCbmhVQVRDNllVbVpKNElkaHlJTlNuNDF5QWJKSXdZUCIsImNzcmZfdG9rZW4iOiJhZDgzNGYxOGRjOGNmNzM0ZTFlNTI0ZTcxNmExNmQzZTRlODNkYzhkIiwiZXhwIjoxNjc3NzE5NDUxLCJpYXQiOjE2NzI1MzU0NTEsImlzcyI6Imp3dCIsImF1ZCI6Imp3dCIsImF1dGhfdHlwZSI6ImNvb2tpZSIsInNlY3VyZSI6dHJ1ZSwibG9naW5fdWEiOiJiJ01vemlsbGEvNS4wIChXaW5kb3dzIE5UIDEwLjA7IFdpbjY0OyB4NjQpIEFwcGxlV2ViS2l0LzUzNy4zNiAoS0hUTUwsIGxpa2UgR2Vja28pIENocm9tZS8xMDguMC4wLjAgU2FmYXJpLzUzNy4zNiciLCJsb2dpbl9pcCI6ImInMjYwMToxYzI6NTAwMTozNWYwOjMwNGQ6Zjg1Nzo2MzNiOjZkNWQnIiwiand0X2lkZW50aXR5IjoiV3FmbXE0dkc4a2cwSENYQnpVYTBGenpqTVhzNVlqQjUifQ.OAxVr5x4F0sm7ZjJBeNT7YGw9XoE5GCsm9AnuD1GYH0
+const val jwtToken = ""
 
 var apiBuilder = ApiBuilder()
 lateinit var preferences: SharedPreferences
@@ -32,7 +33,6 @@ private lateinit var loginButton:Button
 private lateinit var skipButton: Button
 private lateinit var apiView: TextView
 private lateinit var mainMenu:Intent
-
 
 
 class LoginLogic : AppCompatActivity(){
@@ -55,17 +55,16 @@ class LoginLogic : AppCompatActivity(){
                 var payload = Gson().toJson(authSigninPayload)
                 apiBuilder.setupPostRequest(authUrl, payload)
                 apiBuilder.addHeader("authorization", jwtToken)
-
                 var rawResponse = apiBuilder.executeRequest()
                 if (apiBuilder.requestExecutedSuccess()) {
                     changeViewText(apiView, rawResponse)
                     prefEditor.putString("AuthSigninResponse", rawResponse).commit()
+                    Thread.sleep(5000)
                     startActivity(mainMenu)
-                    Thread.sleep(1000)
                     changeViewText(apiView)
                 } else {
-                    Thread.sleep(1000)
-                    changeViewText(apiView, "Login failed!")
+                    changeViewText(apiView, "Login failed due to $rawResponse")
+                    Thread.sleep(5000)
                 }
                 Thread.sleep(1000)
                 changeButtonText(loginButton, "Login")
