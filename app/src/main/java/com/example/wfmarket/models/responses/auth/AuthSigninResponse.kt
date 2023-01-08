@@ -1,4 +1,4 @@
-package com.example.wfmarket.models.response
+package com.example.wfmarket.models.responses.auth
 
 data class AuthSigninResponse (
     val payload: Payload
@@ -8,9 +8,9 @@ data class Payload (
     val user: User
 )
 
-data class User (
+data class User(
     val verification: Boolean,
-    val linkedAccounts: LinkedAccounts,
+    val linkedAccounts: LinkedAccounts?,
     val role: String,
     val anonymous: Boolean,
     val id: String,

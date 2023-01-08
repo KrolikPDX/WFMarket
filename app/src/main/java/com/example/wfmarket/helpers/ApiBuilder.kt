@@ -21,6 +21,13 @@ class ApiBuilder {
             .build()
     }
 
+    fun setupGetRequest(url: String) {
+        request = Request.Builder()
+        request.url(url)
+            .get()
+            .build()
+    }
+
     fun executeRequest():String {
         response = client.newCall(request.build()).execute()
         return response.body?.string() ?: ""

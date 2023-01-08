@@ -29,7 +29,7 @@
         </activity>
 
         <activity
-            android:name=".pageLogic.MainMenu"
+            android:name=".pageLogic.HomePageLogic"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.NoActionBar"
             >
