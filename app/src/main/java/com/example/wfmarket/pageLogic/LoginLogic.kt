@@ -5,8 +5,10 @@ import android.content.SharedPreferences.Editor
 import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
+import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.wfmarket.R
@@ -17,6 +19,7 @@ import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import okhttp3.internal.wait
 
 const val TAG:String = "Print"
 const val authUrl:String = "https://api.warframe.market/v1/auth/signin"
@@ -24,20 +27,22 @@ const val getItemsUrl:String = "https://api.warframe.market/v1/items"
 //eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWQiOiJCbmhVQVRDNllVbVpKNElkaHlJTlNuNDF5QWJKSXdZUCIsImNzcmZfdG9rZW4iOiJhZDgzNGYxOGRjOGNmNzM0ZTFlNTI0ZTcxNmExNmQzZTRlODNkYzhkIiwiZXhwIjoxNjc3NzE5NDUxLCJpYXQiOjE2NzI1MzU0NTEsImlzcyI6Imp3dCIsImF1ZCI6Imp3dCIsImF1dGhfdHlwZSI6ImNvb2tpZSIsInNlY3VyZSI6dHJ1ZSwibG9naW5fdWEiOiJiJ01vemlsbGEvNS4wIChXaW5kb3dzIE5UIDEwLjA7IFdpbjY0OyB4NjQpIEFwcGxlV2ViS2l0LzUzNy4zNiAoS0hUTUwsIGxpa2UgR2Vja28pIENocm9tZS8xMDguMC4wLjAgU2FmYXJpLzUzNy4zNiciLCJsb2dpbl9pcCI6ImInMjYwMToxYzI6NTAwMTozNWYwOjMwNGQ6Zjg1Nzo2MzNiOjZkNWQnIiwiand0X2lkZW50aXR5IjoiV3FmbXE0dkc4a2cwSENYQnpVYTBGenpqTVhzNVlqQjUifQ.OAxVr5x4F0sm7ZjJBeNT7YGw9XoE5GCsm9AnuD1GYH0
 const val jwtToken = ""
 
+//Globals
 var apiBuilder = ApiBuilder()
 lateinit var preferences: SharedPreferences
 lateinit var prefEditor:Editor
 lateinit var tradableItems:TradableItems
 
-private lateinit var emailTextView:TextView
-private lateinit var passwordTextView:TextView
-private lateinit var loginButton:Button
-private lateinit var skipButton: Button
-private lateinit var apiView: TextView
-private lateinit var homePageIntent:Intent
-
 
 class LoginLogic : AppCompatActivity(){
+    private lateinit var emailTextView:TextView
+    private lateinit var passwordTextView:TextView
+    private lateinit var loginButton:Button
+    private lateinit var skipButton: Button
+    private lateinit var apiView: TextView
+    private lateinit var progressBar: ProgressBar
+    private lateinit var homePageIntent:Intent
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -51,13 +56,14 @@ class LoginLogic : AppCompatActivity(){
     private fun loginButtonClicked(): View.OnClickListener {
         return View.OnClickListener {
             GlobalScope.launch(Dispatchers.IO) {
-                changeButtonText(loginButton, "Loading")
+                enableProgressBar(true)
                 //Change to pull data from
                 var authSigninPayload = AuthSigninPayload(emailTextView.text.toString(), passwordTextView.text.toString())
                 var payload = Gson().toJson(authSigninPayload)
                 apiBuilder.setupPostRequest(authUrl, payload)
                 apiBuilder.addHeader("authorization", jwtToken)
                 var rawResponse = apiBuilder.executeRequest()
+                enableProgressBar(false)
                 if (apiBuilder.requestExecutedSuccess()) {
                     changeViewText(apiView, rawResponse)
                     prefEditor.putString("AuthSigninResponse", rawResponse).commit()
@@ -68,23 +74,16 @@ class LoginLogic : AppCompatActivity(){
                     changeViewText(apiView, "Login failed due to $rawResponse")
                     Thread.sleep(5000)
                 }
-                Thread.sleep(1000)
-                changeButtonText(loginButton, "Login")
                 changeViewText(apiView)
             }
         }
     }
 
-    private fun changeViewText (textView: TextView, text:String = "") {
-        this@LoginLogic.runOnUiThread(java.lang.Runnable { textView.text = text})
-    }
 
-    private fun changeButtonText(button:Button, text:String = "") {
-        this@LoginLogic.runOnUiThread(java.lang.Runnable { button.text = text})
-    }
 
     private fun skipLoginButtonClicked(): View.OnClickListener {
         return View.OnClickListener {
+            enableProgressBar(true)
             startActivity(homePageIntent)
         }
     }
@@ -92,7 +91,7 @@ class LoginLogic : AppCompatActivity(){
     private fun setup() {
         preferences = getPreferences(MODE_PRIVATE)
         prefEditor = preferences.edit()
-        prefEditor.clear().commit() //Clear any saved data
+        //prefEditor.clear().commit() //Clear any saved data
 
         homePageIntent = Intent(this, HomePageLogic::class.java)
         emailTextView = findViewById(R.id.emailTextBox)
@@ -104,7 +103,28 @@ class LoginLogic : AppCompatActivity(){
         skipButton = findViewById(R.id.skipLoginButton)
         skipButton.setOnClickListener(skipLoginButtonClicked())
 
+        progressBar = findViewById(R.id.progressBar)
+        progressBar.visibility = View.INVISIBLE
+
         apiView = findViewById(R.id.apiView)
+    }
+
+    private fun changeViewText (textView: TextView, text:String = "") {
+        this@LoginLogic.runOnUiThread(Runnable { textView.text = text})
+    }
+
+    private fun changeButtonText(button:Button, text:String = "") {
+        this@LoginLogic.runOnUiThread(Runnable { button.text = text})
+    }
+
+    private fun enableProgressBar(enabled: Boolean) {
+        this@LoginLogic.runOnUiThread(Runnable {
+            if (enabled)
+                progressBar.visibility = View.VISIBLE
+            else
+                progressBar.visibility = View.INVISIBLE
+
+        })
     }
 }
 

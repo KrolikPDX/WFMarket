@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import com.example.wfmarket.R
 import com.example.wfmarket.models.responses.auth.AuthSigninResponse
@@ -16,26 +17,29 @@ import com.google.gson.Gson
 
 
 class BuySellFragment : Fragment() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    private lateinit var buySellView: TextView
+    private lateinit var createdView:View
+    private lateinit var testButton: Button
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
-        var view = inflater.inflate(R.layout.fragment_buy_sell, container, false)
-        var buySellView = view.findViewById<TextView>(R.id.buySellView)
+    ):View? {
+        setupParams(inflater, container)
+        //Populate tiles
         buySellView.text = tradableItems.payload.items[1].item_name
-        setupParams()
-        return view
+        return createdView
     }
 
-    private fun setupParams(){
-        var authSigningResponse:String?
-        try {
-            authSigningResponse = preferences.getString("AuthSigninResponse", "")
-            user = Gson().fromJson(authSigningResponse, AuthSigninResponse::class.java).payload.user
-        } catch(e:Exception) {
-            Log.i("Print", "Could not find authSignin in preferences ${e.stackTrace}")
+    private fun setupParams(inflater:LayoutInflater, container:ViewGroup?){
+        createdView = inflater.inflate(R.layout.fragment_buy_sell, container, false)
+        buySellView = createdView.findViewById(R.id.buySellView)
+        testButton = createdView.findViewById(R.id.testButton)
+        testButton.setOnClickListener(testClick())
+
+    }
+
+    private fun testClick():View.OnClickListener {
+        return View.OnClickListener {
+            buySellView.text = "Test Button clicked!!"
         }
     }
 }
