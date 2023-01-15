@@ -23,7 +23,8 @@ data class User(
     val banned: Boolean,
     val reputation: Long,
     val background: Any? = null,
-    val hasMail: Boolean
+    val hasMail: Boolean,
+    val ingame_name: String? = null
 )
 
 data class LinkedAccounts (

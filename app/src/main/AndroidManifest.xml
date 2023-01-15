@@ -31,7 +31,7 @@
         <activity
             android:name=".pageLogic.HomePageLogic"
             android:exported="true"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:theme="@style/Theme.AppCompat"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

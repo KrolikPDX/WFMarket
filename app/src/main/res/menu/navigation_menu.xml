@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+ <item
+     android:id="@+id/navigation_buySell"
+     android:icon="@drawable/ic_trade_icon"
+     android:title="Buy / Sell"/>
+
+ <item
+     android:id="@+id/navigation_items"
+     android:icon="@drawable/ic_items_icon"
+     android:title="Item Info"/>
+
+ <item
+     android:id="@+id/navigation_contracts"
+     android:icon="@drawable/ic_handshake_icon"
+     android:title="Contracts"/>
+
+ <item
+     android:id="@+id/navigation_lich"
+     android:icon="@drawable/ic_lich_info_icon"
+     android:title="Lich Info"/>
+
+ <item
+     android:title="Settings">
+     <menu>
+        <item
+            android:id="@+id/settings_push"
+            android:title="Push Notifications"/>
+
+        <item
+            android:id="@+id/settings_user"
+            android:title="User Settings"/>
+     </menu>
+ </item>
+</menu>

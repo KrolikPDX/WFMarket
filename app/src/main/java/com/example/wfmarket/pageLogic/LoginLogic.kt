@@ -19,7 +19,6 @@ import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import okhttp3.internal.wait
 
 const val TAG:String = "Print"
 const val authUrl:String = "https://api.warframe.market/v1/auth/signin"
