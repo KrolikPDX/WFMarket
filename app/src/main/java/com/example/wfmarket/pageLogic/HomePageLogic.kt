@@ -1,4 +1,5 @@
 package com.example.wfmarket.pageLogic
+import android.app.ActionBar
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -48,8 +49,10 @@ class HomePageLogic: AppCompatActivity(){
         val navigationUserName: TextView = navigationHeader.findViewById(R.id.user_name)
         if (user != null && user?.ingame_name != null) {
             navigationUserName.text = user?.ingame_name
+        } else if (user != null){
+            navigationUserName.text = "Please navigate to warframe.market to link your account"
         } else {
-            navigationUserName.text = "No Username Set!"
+            navigationUserName.text = "Not Signed In"
         }
     }
 

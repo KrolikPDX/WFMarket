@@ -109,21 +109,21 @@ class LoginLogic : AppCompatActivity(){
     }
 
     private fun changeViewText (textView: TextView, text:String = "") {
-        this@LoginLogic.runOnUiThread(Runnable { textView.text = text})
+        this@LoginLogic.runOnUiThread { textView.text = text }
     }
 
     private fun changeButtonText(button:Button, text:String = "") {
-        this@LoginLogic.runOnUiThread(Runnable { button.text = text})
+        this@LoginLogic.runOnUiThread { button.text = text}
     }
 
     private fun enableProgressBar(enabled: Boolean) {
-        this@LoginLogic.runOnUiThread(Runnable {
+        this@LoginLogic.runOnUiThread {
             if (enabled)
                 progressBar.visibility = View.VISIBLE
             else
                 progressBar.visibility = View.INVISIBLE
 
-        })
+        }
     }
 }
 
