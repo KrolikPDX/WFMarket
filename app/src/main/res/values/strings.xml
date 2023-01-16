@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">WFMarket</string>
     <string name="market_login">Market Login</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
 </resources>

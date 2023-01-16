@@ -14,7 +14,7 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/home_page_textView"
             android:layout_width="190dp"
             android:layout_height="86dp"
             android:text="Home Page"
@@ -27,7 +27,6 @@
             app:layout_constraintTop_toTopOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!--
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigationView"
         android:layout_width="match_parent"
@@ -36,5 +35,5 @@
         app:headerLayout="@layout/navigation_header"
         app:menu="@menu/navigation_menu"
         android:fitsSystemWindows="true"/>
- -->
+
 </androidx.drawerlayout.widget.DrawerLayout>
