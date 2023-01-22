@@ -2,8 +2,7 @@ package com.example.wfmarket.pageLogic
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
-import android.view.View
-import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -14,6 +13,8 @@ import com.example.wfmarket.R
 import com.example.wfmarket.models.responses.auth.AuthSigninResponse
 import com.example.wfmarket.models.responses.auth.User
 import com.example.wfmarket.models.responses.tradableItems.TradableItems
+import com.example.wfmarket.pageLogic.fragments.BuySellFragment
+import com.example.wfmarket.pageLogic.fragments.ItemInfoFragment
 import com.google.android.material.navigation.NavigationView
 import com.google.gson.Gson
 
@@ -23,18 +24,22 @@ class HomePageLogic: AppCompatActivity(){
     private lateinit var toolbar: Toolbar
     private lateinit var toggle:ActionBarDrawerToggle
     private lateinit var drawerLayout: DrawerLayout
-    lateinit var navigationView: NavigationView
+    private lateinit var navigationView: NavigationView
+
+    private lateinit var fragmentView: FrameLayout
+    private val buySellFragment = BuySellFragment()
+    private val itemInfoFragment = ItemInfoFragment()
 
     private lateinit var navigationUserName: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home_page)
-
         setupParams()
-        //setupTradeData()
+        setupSignin()
+        setupGlobalTradeData()
         setupNavigation()
-
+        setupFragments()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -46,27 +51,26 @@ class HomePageLogic: AppCompatActivity(){
 
     private fun setupParams() {
         toolbar = findViewById(R.id.navigation_toolbar)
-        setSupportActionBar(toolbar)
 
         drawerLayout = findViewById(R.id.drawerLayout)
         navigationView = findViewById(R.id.navigationView)
+        fragmentView = findViewById(R.id.fragmentFrame)
 
-        val navigationHeader: View = navigationView.getHeaderView(0)
-        navigationUserName = navigationHeader.findViewById(R.id.navigation_user_name)
-
+        navigationUserName = navigationView.getHeaderView(0).findViewById(R.id.navigation_user_name)
         toggle = ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close)
+    }
 
-        var authSigningResponse:String?
+    private fun setupSignin() {
         try {
-            authSigningResponse = preferences.getString("AuthSigninResponse", "")
+            val authSigningResponse = preferences.getString("AuthSigninResponse", "")
             user = Gson().fromJson(authSigningResponse, AuthSigninResponse::class.java).payload.user
         } catch(e:Exception) {
             Log.i("Print", "Could not find authSignin in preferences ${e.stackTrace}")
         }
-
     }
 
     private fun setupNavigation() {
+        setSupportActionBar(toolbar)
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         supportActionBar?.setDisplayHomeAsUpEnabled(true) //Adds back arrow to close open menu
@@ -82,20 +86,38 @@ class HomePageLogic: AppCompatActivity(){
         navigationView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.navigation_buySell -> {
-                    Toast.makeText(applicationContext, "Clicked on Buy Sell", Toast.LENGTH_SHORT).show()
                     Log.i(TAG, "Clicked on buy sell!")
+                    supportFragmentManager.beginTransaction().apply {
+                        replace(fragmentView.id, buySellFragment)
+                        commit()
+                    }
                 }
-                R.id.navigation_items -> Toast.makeText(applicationContext, "Clicked on Items", Toast.LENGTH_SHORT).show()
+                R.id.navigation_items -> {
+                    Log.i(TAG, "Clicked on item info!")
+                    supportFragmentManager.beginTransaction().apply {
+                        replace(fragmentView.id, itemInfoFragment)
+                        commit()
+                    }
+                }
                 R.id.navigation_contracts -> Toast.makeText(applicationContext, "Clicked on Contracts", Toast.LENGTH_SHORT).show()
                 R.id.navigation_lich -> Toast.makeText(applicationContext, "Clicked on Lich", Toast.LENGTH_SHORT).show()
+
             }
+            drawerLayout.close()
             true
         }
     }
 
-    private fun setupTradeData() {
+    private fun setupFragments() {
+        supportFragmentManager.beginTransaction().apply {
+            replace(fragmentView.id, buySellFragment)
+            commit()
+        }
+    }
+
+    private fun setupGlobalTradeData() {
         apiBuilder.setupGetRequest(getItemsUrl)
-        var rawResponse = apiBuilder.executeRequest()
+        val rawResponse = apiBuilder.executeRequest()
         tradableItems = Gson().fromJson(rawResponse, TradableItems::class.java)
     }
 }
