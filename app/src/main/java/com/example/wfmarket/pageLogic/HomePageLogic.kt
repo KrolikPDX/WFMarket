@@ -108,9 +108,10 @@ class HomePageLogic: AppCompatActivity(){
         }
     }
 
+    //Setup default fragment upon initial load
     private fun setupFragments() {
         supportFragmentManager.beginTransaction().apply {
-            replace(fragmentView.id, buySellFragment)
+            replace(fragmentView.id, itemInfoFragment)
             commit()
         }
     }
