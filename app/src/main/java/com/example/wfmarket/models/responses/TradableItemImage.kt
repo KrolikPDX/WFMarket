@@ -2,25 +2,27 @@ package com.example.wfmarket.models.responses
 
 import android.graphics.Bitmap
 import android.util.Log
+import com.example.wfmarket.helpers.decodeFromBase64
 import com.example.wfmarket.pageLogic.TAG
 
 class TradableItemImage {
-    private var itemImages = mutableMapOf<String, Bitmap>()
+    //                               <ItemName, EncodedBitmap>
+    private var itemImages:MutableMap<String, String> = mutableMapOf()
 
     fun getImage(itemName:String):Bitmap? {
-        return itemImages[itemName]
+        try {
+            return decodeFromBase64(itemImages[itemName]!!)
+        } catch (e: Exception) {
+            Log.i(TAG, "Could not find $itemName in itemImages")
+        }
+        return null
     }
 
     fun getAllItemNames(): MutableSet<String> {
         return itemImages.keys
     }
 
-    fun getSize():Int {
-        return itemImages.size
-    }
-
-    fun addImage(itemName:String, image:Bitmap) {
-        Log.i(TAG, "Added image $itemName")
+    fun addImage(itemName:String, image:String) {
         itemImages[itemName] = image
     }
 }

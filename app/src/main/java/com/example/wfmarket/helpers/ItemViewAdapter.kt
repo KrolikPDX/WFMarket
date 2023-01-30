@@ -1,3 +1,5 @@
+package com.example.wfmarket.helpers
+
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -7,18 +9,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.recyclerview.widget.RecyclerView
 import com.example.wfmarket.R
-import com.example.wfmarket.models.responses.TradableItemImage
-import com.example.wfmarket.models.responses.tradableItems.Items
-import com.example.wfmarket.pageLogic.*
+import com.example.wfmarket.pageLogic.prefEditor
+import com.example.wfmarket.pageLogic.tradableItemImages
+import com.example.wfmarket.pageLogic.tradableItems
 import com.google.gson.Gson
 import java.net.URL
 
-
 class ItemViewAdapter(private val context: Context?) : RecyclerView.Adapter<ItemViewAdapter.ViewHolder>() {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         // to inflate the layout for each item of recycler view.
         val view: View = LayoutInflater.from(parent.context).inflate(R.layout.cardview_item, parent, false)
         return ViewHolder(view)
@@ -40,22 +40,28 @@ class ItemViewAdapter(private val context: Context?) : RecyclerView.Adapter<Item
     }
 
     //OnCardView create: Add data to card view elements
-    override fun onBindViewHolder(holder: ItemViewAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val itemName = tradableItems.payload.items[position].item_name
         holder.itemTitleView.text = itemName
-        if (tradableItemImages.getImage(itemName) == null) {
+
+
+        val existingImage = tradableItemImages.getImage(itemName)
+        if (existingImage == null) { //Get image from internet since its not stored
             val bitmapImage:Bitmap? = getImageFor(itemName)
-            if (bitmapImage != null) {
-                tradableItemImages.addImage(itemName, bitmapImage)
-                val jsonObject = Gson().toJson(tradableItemImages)
-                Log.i(TAG, "Adding image to preferences: $itemName")
-                Log.i(TAG, "Total image items = ${tradableItemImages.getSize()}")
-                prefEditor.putString("TradableItemImages", jsonObject).commit()
+
+            if (bitmapImage != null) { //If an internet image was found
+                saveImageToPrefs(itemName, bitmapImage)
                 holder.imageView.setImageBitmap(bitmapImage)
             }
-        } else {
-            holder.imageView.setImageBitmap(tradableItemImages.getImage(itemName))
+        } else { //Display existing image
+            holder.imageView.setImageBitmap(existingImage)
         }
+    }
+
+    private fun saveImageToPrefs(itemName:String, image:Bitmap) {
+        tradableItemImages.addImage(itemName, image.encodeToBase64())
+        val jsonObject = Gson().toJson(tradableItemImages)
+        prefEditor.putString("TradableItemImages", jsonObject).commit()
     }
 
     private fun getImageFor(itemName: String): Bitmap? {

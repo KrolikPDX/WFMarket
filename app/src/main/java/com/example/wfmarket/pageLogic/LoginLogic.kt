@@ -2,11 +2,9 @@ package com.example.wfmarket.pageLogic
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
@@ -21,7 +19,6 @@ import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.util.Dictionary
 
 const val TAG:String = "Print"
 const val authUrl:String = "https://api.warframe.market/v1/auth/signin"
@@ -35,7 +32,7 @@ var apiBuilder = ApiBuilder()
 lateinit var preferences: SharedPreferences
 lateinit var prefEditor:Editor
 lateinit var tradableItems:TradableItems
-lateinit var tradableItemImages: TradableItemImage //Setup in ItemInfoFragment
+var tradableItemImages:TradableItemImage = TradableItemImage()
 
 class LoginLogic : AppCompatActivity(){
     private lateinit var emailTextView:TextView
@@ -81,8 +78,6 @@ class LoginLogic : AppCompatActivity(){
             }
         }
     }
-
-
 
     private fun skipLoginButtonClicked(): View.OnClickListener {
         return View.OnClickListener {
