@@ -2,7 +2,9 @@ package com.example.wfmarket.pageLogic.fragments
 
 import ItemViewAdapter
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +16,11 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.wfmarket.R
-import com.example.wfmarket.pageLogic.tradableItems
+import com.example.wfmarket.models.responses.TradableItemImage
+import com.example.wfmarket.models.responses.tradableItems.Items
+import com.example.wfmarket.pageLogic.*
+import com.google.gson.Gson
+import java.net.URL
 
 /* For item icon:
 1. Get item info https://api.warframe.market/v1/items/mirage_prime_systems
@@ -45,7 +51,6 @@ class ItemInfoFragment : Fragment() {
     ): View? {
         rootView = inflater.inflate(R.layout.fragment_item_info, container, false)
         setupParams()
-
         return rootView
     }
 
@@ -53,11 +58,12 @@ class ItemInfoFragment : Fragment() {
         recyclerView = rootView.findViewById(R.id.recyclerView)
         layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false)
         recyclerView.adapter = ItemViewAdapter(this.context)
-    }
-
-    private fun nextButtonPress(): View.OnClickListener {
-        return View.OnClickListener {
-            //var itemName = tradableItems.payload.items[itemIndex].item_name
+        try {
+            val tradableItemImages = Gson().fromJson(preferences.getString("TradableItemImages", ""), TradableItemImage::class.java)
+            Log.i(TAG, "Found total images = " + tradableItemImages.getSize())
+            Log.i(TAG, "Found images in preferences = " + tradableItemImages.getAllItemNames().toString())
+        } catch (e: Exception) {
+            Log.i(TAG, "Could not find existing tradableItemImages in preferences")
         }
     }
 }

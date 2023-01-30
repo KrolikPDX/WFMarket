@@ -7,7 +7,7 @@
     android:layout_margin="5dp"
     app:cardElevation="5dp">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -15,13 +15,24 @@
 
         <TextView
             android:id="@+id/itemTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
+            android:layout_width="195dp"
+            android:layout_height="102dp"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="2dp"
             android:layout_marginLeft="15dp"
-            android:text="Item"
+            android:gravity="center"
+            android:text="Some testing item something test"
             android:textSize="15dp"
-            android:textStyle="bold" />
+            android:textStyle="bold"/>
 
-    </LinearLayout>
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="184dp"
+            android:layout_height="102dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="4dp"
+            android:layout_toEndOf="@+id/itemTitle"/>
+
+    </RelativeLayout>
 </androidx.cardview.widget.CardView>

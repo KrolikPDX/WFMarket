@@ -2,6 +2,7 @@ package com.example.wfmarket.pageLogic
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
@@ -14,11 +15,13 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.wfmarket.R
 import com.example.wfmarket.helpers.ApiBuilder
 import com.example.wfmarket.models.payloads.AuthSigninPayload
+import com.example.wfmarket.models.responses.TradableItemImage
 import com.example.wfmarket.models.responses.tradableItems.TradableItems
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.util.Dictionary
 
 const val TAG:String = "Print"
 const val authUrl:String = "https://api.warframe.market/v1/auth/signin"
@@ -32,7 +35,7 @@ var apiBuilder = ApiBuilder()
 lateinit var preferences: SharedPreferences
 lateinit var prefEditor:Editor
 lateinit var tradableItems:TradableItems
-
+lateinit var tradableItemImages: TradableItemImage //Setup in ItemInfoFragment
 
 class LoginLogic : AppCompatActivity(){
     private lateinit var emailTextView:TextView
