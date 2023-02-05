@@ -47,7 +47,8 @@ class AllItemsViewAdapter(private val context: Context?) : RecyclerView.Adapter<
         val item = tradableItems.payload.items[position]
         holder.itemTitleView.text = item.item_name
         val itemUrl = "https://warframe.market/static/assets/${item.thumb}"
-        Picasso.get().load(itemUrl).into(holder.imageView)
+        val fullImageUrl = "https://warframe.market/static/assets/${item.thumb.replace(".128x128", "").replace("/thumbs", "")}"
+        Picasso.get().load(fullImageUrl).into(holder.imageView)
         holder.cardView.setOnClickListener {
             Log.i(TAG, "Clicked on item ${item.item_name}")
             val itemDetailsFragment = ItemDetailsFragment(item.item_name)

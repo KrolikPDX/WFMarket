@@ -1,6 +1,7 @@
 package com.example.wfmarket.pageLogic.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.wfmarket.R
+import com.example.wfmarket.pageLogic.TAG
 import com.example.wfmarket.pageLogic.tradableItems
 import com.squareup.picasso.Picasso
 
@@ -34,6 +36,8 @@ class ItemDetailsFragment(private val itemName: String) : Fragment() {
             it.item_name == itemName
         }!!
         val itemUrl = "https://warframe.market/static/assets/${item.thumb}"
-        Picasso.get().load(itemUrl).into(itemImage)
+        val fullImageUrl = "https://warframe.market/static/assets/${item.thumb.replace(".128x128", "").replace("/thumbs", "")}"
+        Log.i(TAG, "Displaying Url=$fullImageUrl")
+        Picasso.get().load(fullImageUrl).into(itemImage)
     }
 }
