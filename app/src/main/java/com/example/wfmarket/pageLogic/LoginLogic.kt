@@ -32,7 +32,6 @@ var apiBuilder = ApiBuilder()
 lateinit var preferences: SharedPreferences
 lateinit var prefEditor:Editor
 lateinit var tradableItems:TradableItems
-var tradableItemImages:TradableItemImage = TradableItemImage()
 
 class LoginLogic : AppCompatActivity(){
     private lateinit var emailTextView:TextView

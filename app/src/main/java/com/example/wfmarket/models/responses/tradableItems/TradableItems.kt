@@ -5,7 +5,7 @@ data class TradableItems (
 )
 
 data class Payload (
-    val items: List<Items>
+    var items: List<Items>
 )
 
 data class Items(

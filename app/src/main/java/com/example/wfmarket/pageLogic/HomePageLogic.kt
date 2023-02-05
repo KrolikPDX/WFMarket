@@ -2,6 +2,8 @@ package com.example.wfmarket.pageLogic
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.MotionEvent
+import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -14,7 +16,7 @@ import com.example.wfmarket.models.responses.auth.AuthSigninResponse
 import com.example.wfmarket.models.responses.auth.User
 import com.example.wfmarket.models.responses.tradableItems.TradableItems
 import com.example.wfmarket.pageLogic.fragments.BuySellFragment
-import com.example.wfmarket.pageLogic.fragments.ItemInfoFragment
+import com.example.wfmarket.pageLogic.fragments.AllItemsFragment
 import com.google.android.material.navigation.NavigationView
 import com.google.gson.Gson
 
@@ -28,7 +30,7 @@ class HomePageLogic: AppCompatActivity(){
 
     private lateinit var fragmentView: FrameLayout
     private val buySellFragment = BuySellFragment()
-    private val itemInfoFragment = ItemInfoFragment()
+    private val allItemsFragment = AllItemsFragment()
 
     private lateinit var navigationUserName: TextView
 
@@ -95,7 +97,7 @@ class HomePageLogic: AppCompatActivity(){
                 R.id.navigation_items -> {
                     Log.i(TAG, "Clicked on item info!")
                     supportFragmentManager.beginTransaction().apply {
-                        replace(fragmentView.id, itemInfoFragment)
+                        replace(fragmentView.id, allItemsFragment)
                         commit()
                     }
                 }
@@ -111,7 +113,7 @@ class HomePageLogic: AppCompatActivity(){
     //Setup default fragment upon initial load
     private fun setupFragments() {
         supportFragmentManager.beginTransaction().apply {
-            replace(fragmentView.id, itemInfoFragment)
+            replace(fragmentView.id, allItemsFragment)
             commit()
         }
     }
@@ -120,5 +122,6 @@ class HomePageLogic: AppCompatActivity(){
         apiBuilder.setupGetRequest(getItemsUrl)
         val rawResponse = apiBuilder.executeRequest()
         tradableItems = Gson().fromJson(rawResponse, TradableItems::class.java)
+        tradableItems.payload.items = tradableItems.payload.items.shuffled() //Randomize item order
     }
 }

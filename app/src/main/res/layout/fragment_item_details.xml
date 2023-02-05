@@ -1,33 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
-        android:id="@+id/titleTextView"
+        android:id="@+id/itemTextView"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:text="Item Info Fragment"
+        android:text="Item Details Fragment"
         android:gravity="center"
         android:textSize="35dp" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+
+    <ImageView
+        android:id="@+id/itemImage"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/titleTextView"
-        tools:listitem="@layout/cardview_item"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:spanCount="1"/>
+        android:layout_height="250dp"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/ic_launcher_background" />
+
 
     <!-- View Contains:
     1. Item Name
     2. Icon as background
-
-
     -->
 
-</RelativeLayout>
+</LinearLayout>
