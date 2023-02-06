@@ -2,8 +2,6 @@ package com.example.wfmarket.pageLogic
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
-import android.view.MotionEvent
-import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -21,6 +19,25 @@ import com.google.android.material.navigation.NavigationView
 import com.google.gson.Gson
 
 var user: User? = null
+
+/*
+TODO:
+- Overall -
+    -> Update theme / UI
+
+- AllItemsFragment -
+    -> Update CardView to include cropped picture with title underneath
+        -> Fav item icon if user is logged in?
+    -> Add sort by tag -> Get list of all tags
+    -> Add search by name -> List relevant items mid type
+    -> Item name in all caps
+    -> Update overall UI
+
+- ItemDetailsFragment -
+    -> Back button to go to previous fragment
+    -> Setup basic details
+    -> List other items in set if any
+ */
 
 class HomePageLogic: AppCompatActivity(){
     private lateinit var toolbar: Toolbar

@@ -25,7 +25,7 @@
         app:spanCount="2"/>
 
     <!-- View Contains:
-    1. Item Name
+    1. com.example.wfmarket.models.responses.tradableItems.Item Name
     2. Icon as background
     -->
 

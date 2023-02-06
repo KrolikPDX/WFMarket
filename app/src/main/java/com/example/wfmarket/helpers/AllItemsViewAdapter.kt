@@ -2,17 +2,17 @@ package com.example.wfmarket.helpers
 
 import com.example.wfmarket.pageLogic.fragments.ItemDetailsFragment
 import android.content.Context
-import android.util.Log
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.wfmarket.R
-import com.example.wfmarket.pageLogic.TAG
 import com.example.wfmarket.pageLogic.tradableItems
 import com.squareup.picasso.Picasso
 
@@ -43,16 +43,18 @@ class AllItemsViewAdapter(private val context: Context?) : RecyclerView.Adapter<
     }
 
     //OnCardView create: Add data to card view elements
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = tradableItems.payload.items[position]
         holder.itemTitleView.text = item.item_name
-        val itemUrl = "https://warframe.market/static/assets/${item.thumb}"
-        val fullImageUrl = "https://warframe.market/static/assets/${item.thumb.replace(".128x128", "").replace("/thumbs", "")}"
+        val fullImageUrl = "https://warframe.market/static/assets/${item.thumb.replace(".128x128", "")
+            .replace("/thumbs", "")}"
         Picasso.get().load(fullImageUrl).into(holder.imageView)
         holder.cardView.setOnClickListener {
-            Log.i(TAG, "Clicked on item ${item.item_name}")
-            val itemDetailsFragment = ItemDetailsFragment(item.item_name)
+            //Send request for item info given item_url
+            //Pass info to ItemDetailsFragment
 
+            val itemDetailsFragment = ItemDetailsFragment(item)
             (context as AppCompatActivity).supportFragmentManager.beginTransaction().apply {
                 replace(R.id.fragmentFrame, itemDetailsFragment)
                     .addToBackStack(null)

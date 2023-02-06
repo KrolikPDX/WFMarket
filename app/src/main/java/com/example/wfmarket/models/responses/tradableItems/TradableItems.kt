@@ -1,10 +1,10 @@
 package com.example.wfmarket.models.responses.tradableItems
 
 data class TradableItems (
-    val payload: Payload
+    val payload: TradableItemsPayload
 )
 
-data class Payload (
+data class TradableItemsPayload (
     var items: List<Items>
 )
 

@@ -7,36 +7,38 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="200dp"
         app:cardCornerRadius="20dp"
-        android:layout_margin="2dp"
+        android:layout_margin="5dp"
         app:cardElevation="5dp"
+        android:background="@color/primaryColor"
         app:cardPreventCornerOverlap="false"
         app:cardUseCompatPadding="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/primaryColor"
             android:orientation="vertical">
 
-            <TextView
+            <com.lb.auto_fit_textview.AutoResizeTextView
                 android:id="@+id/itemTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
-                android:layout_gravity="center_vertical|center_horizontal"
+                android:layout_gravity="center_horizontal"
                 android:layout_margin="5dp"
-                android:text="Super long item name that wrap if too long"
+                android:text="Test text name"
+                android:textSize="25sp"
+                android:maxLines="2"
                 android:textAlignment="center"
-                android:textSize="17dp"
                 android:textStyle="bold" />
 
             <ImageView
                 android:id="@+id/imageView"
                 android:layout_width="match_parent"
                 android:layout_height="125dp"
-                android:layout_gravity="center"
-                android:layout_margin="2dp"
+                android:layout_margin="5dp"
+                android:scaleType="fitCenter"
+                android:fitsSystemWindows="true"
                 android:src="@drawable/ic_launcher_background" />
 
         </LinearLayout>
