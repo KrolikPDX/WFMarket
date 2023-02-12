@@ -57,7 +57,7 @@ class ItemDetailsFragment(private val item: Items) : Fragment() {
         //mod_max_rank
         //rarity
         //wiki_link
-        //Other items in set if any
+        //Other items in set if anyd
     }
 
     private fun setupViewData() {

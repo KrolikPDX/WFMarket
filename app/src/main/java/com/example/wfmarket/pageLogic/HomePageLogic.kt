@@ -36,7 +36,12 @@ TODO:
 - ItemDetailsFragment -
     -> Back button to go to previous fragment
     -> Setup basic details
-    -> List other items in set if any
+    -> List other items in set if any (https://www.geeksforgeeks.org/gridview-in-android-with-example/)
+        -> Setup gridview to display a grid of items with 2 columns
+        -> Create itemsInSet adapter to add values to each card view
+            -> Pass list of items in set to adapter
+            -> Gridview.setAdapter(adapter)
+
  */
 
 class HomePageLogic: AppCompatActivity(){

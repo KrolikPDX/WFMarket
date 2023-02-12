@@ -1,4 +1,4 @@
-package com.example.wfmarket.helpers
+package com.example.wfmarket.adapters
 
 import com.example.wfmarket.pageLogic.fragments.ItemDetailsFragment
 import android.content.Context
