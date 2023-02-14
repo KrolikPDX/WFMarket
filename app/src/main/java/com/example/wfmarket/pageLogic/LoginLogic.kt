@@ -20,7 +20,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-const val TAG:String = "Print"
+const val   TAG:String = "Print"
 const val authUrl:String = "https://api.warframe.market/v1/auth/signin"
 const val getItemsUrl:String = "https://api.warframe.market/v1/items"
 const val getItemOrders:String = "https://api.warframe.market/v1/items/{url_name}/orders"
