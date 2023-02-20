@@ -1,29 +1,31 @@
 package com.example.wfmarket.pageLogic.fragments
 
-import com.example.wfmarket.models.responses.tradableItems.ItemDetails
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewManager
 import android.widget.GridView
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.wfmarket.R
-import com.example.wfmarket.adapters.AllItemsViewAdapter
 import com.example.wfmarket.adapters.ItemsInSetAdapter
+import com.example.wfmarket.models.responses.tradableItems.ItemDetails
 import com.example.wfmarket.models.responses.tradableItems.ItemDetailsItem
 import com.example.wfmarket.models.responses.tradableItems.Items
 import com.example.wfmarket.models.responses.tradableItems.ItemsInSet
-import com.example.wfmarket.pageLogic.TAG
 import com.example.wfmarket.pageLogic.apiBuilder
 import com.google.gson.Gson
 import com.squareup.picasso.Picasso
+import java.util.*
+import java.util.Map.entry
+
 
 class ItemDetailsFragment(private val item: Items) : Fragment() {
     private lateinit var rootView: View
     private lateinit var itemTitle: TextView
+    private lateinit var itemRarity: TextView
     private lateinit var itemImage: ImageView
     private lateinit var itemDescription: TextView
     private lateinit var itemsInSetGrid: GridView
@@ -54,13 +56,12 @@ class ItemDetailsFragment(private val item: Items) : Fragment() {
 
     private fun setupParams() {
         itemTitle = rootView.findViewById(R.id.itemTitle)
+        itemRarity = rootView.findViewById(R.id.itemRarity)
         itemImage = rootView.findViewById(R.id.itemImage)
         itemDescription = rootView.findViewById(R.id.itemDescription)
         itemsInSetGrid = rootView.findViewById(R.id.itemInSetGridView)
         //mod_max_rank
-        //rarity
         //wiki_link
-        //Other items in set
     }
 
     private fun setupViewData() {
@@ -70,6 +71,11 @@ class ItemDetailsFragment(private val item: Items) : Fragment() {
             .replace("/thumbs", "")}"
         Picasso.get().load(fullImageUrl).into(itemImage) //Add url to imageview
         itemDescription.text = itemDetails.en.description
+
+        if (itemDetails.rarity == null)
+                (itemRarity.parent as ViewManager).removeView(itemRarity)
+        else itemRarity.text = itemDetails.rarity!!.uppercase()
+
         itemsInSetGrid.adapter = ItemsInSetAdapter(this.requireContext(), item, fullItemDetails)
     }
 }

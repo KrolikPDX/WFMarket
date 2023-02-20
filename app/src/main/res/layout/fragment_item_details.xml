@@ -21,40 +21,39 @@
     <ImageView
         android:id="@+id/itemImage"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="175dp"
         android:layout_marginTop="10dp"
         android:layout_gravity="center_horizontal"
         android:src="@drawable/ic_launcher_background" />
-
-    <com.lb.auto_fit_textview.AutoResizeTextView
-        android:id="@+id/itemDescription"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:maxLines="3"
-        android:background="@color/material_dynamic_neutral30"
-        android:layout_marginTop="10dp"
-        android:padding="10dp"
-        android:text="Item Description "
-        android:textSize="30sp" />
 
     <TextView
         android:id="@+id/itemRarity"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:gravity="center"
-        android:background="@color/cardview_dark_background"
-        android:layout_margin="5dp"
+        android:layout_marginTop="5dp"
+        android:textStyle="bold"
         android:text="Item Rarity Placeholder"
+        android:textSize="25sp" />
+
+    <com.lb.auto_fit_textview.AutoResizeTextView
+        android:id="@+id/itemDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:maxLines="3"
+        android:padding="10dp"
+        android:text="Item Description "
         android:textSize="20sp" />
 
     <GridView
         android:id="@+id/itemInSetGridView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:numColumns="2"
-        android:horizontalSpacing="10dp"
-        android:verticalSpacing="10dp"
+        android:numColumns="3"
+        android:horizontalSpacing="5dp"
+        android:verticalSpacing="5dp"
         tools:listitem="@layout/cardview_item_in_set">
     </GridView>
 

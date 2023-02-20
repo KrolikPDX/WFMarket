@@ -12,7 +12,7 @@ data class ItemDetailsPayload (
 
 data class ItemDetailsItem (
     val id: String,
-    val items_in_set: List<ItemsInSet>
+    var items_in_set: List<ItemsInSet> //Var so we can remove duplicates
 )
 
 data class ItemsInSet (
@@ -22,7 +22,7 @@ data class ItemsInSet (
     val mod_max_rank: Long,
     val trading_tax: Long,
     val url_name: String,
-    val rarity: String,
+    val rarity: String?,
     val icon_format: String,
     val sub_icon: Any? = null,
     val id: String,
