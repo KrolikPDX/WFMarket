@@ -7,17 +7,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.wfmarket.R
+import com.example.wfmarket.pageLogic.HomePageLogic
+import com.example.wfmarket.pageLogic.fragments.AllItemsFragment
 import com.example.wfmarket.pageLogic.tradableItems
 import com.squareup.picasso.Picasso
 
 
-class AllItemsViewAdapter(private val context: Context?) : RecyclerView.Adapter<AllItemsViewAdapter.ViewHolder>() {
+class AllItemsViewAdapter(private val context: Context?, private val hostFragment: AllItemsFragment) : RecyclerView.Adapter<AllItemsViewAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         // to inflate the layout for each item of recycler view.
@@ -50,11 +53,12 @@ class AllItemsViewAdapter(private val context: Context?) : RecyclerView.Adapter<
         val fullImageUrl = "https://warframe.market/static/assets/${item.thumb.replace(".128x128", "")
             .replace("/thumbs", "")}"
         Picasso.get().load(fullImageUrl).into(holder.imageView)
+
         holder.cardView.setOnClickListener {
-            //Send request for item info given item_url
-            //Pass info to ItemDetailsFragment
+            hostFragment.displayProgressBar(View.VISIBLE)
 
             val itemDetailsFragment = ItemDetailsFragment(item)
+            //Replace/overlay current fragment with new fragment
             (context as AppCompatActivity).supportFragmentManager.beginTransaction().apply {
                 replace(R.id.fragmentFrame, itemDetailsFragment)
                     .addToBackStack(null)

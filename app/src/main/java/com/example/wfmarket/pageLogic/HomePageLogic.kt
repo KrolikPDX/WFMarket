@@ -13,10 +13,11 @@ import com.example.wfmarket.R
 import com.example.wfmarket.models.responses.auth.AuthSigninResponse
 import com.example.wfmarket.models.responses.auth.User
 import com.example.wfmarket.models.responses.tradableItems.TradableItems
-import com.example.wfmarket.pageLogic.fragments.BuySellFragment
 import com.example.wfmarket.pageLogic.fragments.AllItemsFragment
+import com.example.wfmarket.pageLogic.fragments.BuySellFragment
 import com.google.android.material.navigation.NavigationView
 import com.google.gson.Gson
+
 
 var user: User? = null
 
@@ -96,8 +97,8 @@ class HomePageLogic: AppCompatActivity(){
     private fun setupNavigation() {
         setSupportActionBar(toolbar)
         drawerLayout.addDrawerListener(toggle)
-        toggle.syncState()
-        supportActionBar?.setDisplayHomeAsUpEnabled(true) //Adds back arrow to close open menu
+        toggle.syncState() //Sets up icon
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         if (user != null && user?.ingame_name != null) {
             navigationUserName.text = user?.ingame_name
         } else if (user != null) {
@@ -106,18 +107,15 @@ class HomePageLogic: AppCompatActivity(){
             navigationUserName.text = "Not signed in."
         }
 
-
         navigationView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.navigation_buySell -> {
-                    Log.i(TAG, "Clicked on buy sell!")
                     supportFragmentManager.beginTransaction().apply {
                         replace(fragmentView.id, buySellFragment)
                         commit()
                     }
                 }
                 R.id.navigation_items -> {
-                    Log.i(TAG, "Clicked on item info!")
                     supportFragmentManager.beginTransaction().apply {
                         replace(fragmentView.id, allItemsFragment)
                         commit()
