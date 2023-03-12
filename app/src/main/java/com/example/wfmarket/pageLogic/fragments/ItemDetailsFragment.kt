@@ -39,7 +39,6 @@ class ItemDetailsFragment(private val item: Items) : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = inflater.inflate(R.layout.fragment_item_details, container, false)
-
         getItemDetails()
         setupParams()
         setupViewData()
@@ -77,6 +76,5 @@ class ItemDetailsFragment(private val item: Items) : Fragment() {
                 (itemRarity.parent as ViewManager).removeView(itemRarity)
         else itemRarity.text = itemDetails.rarity!!.uppercase()
         itemsInSetGrid.adapter = ItemsInSetAdapter(this.requireContext(), item, fullItemDetails)
-
     }
 }

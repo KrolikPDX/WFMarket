@@ -13,7 +13,6 @@
         android:paddingHorizontal="40dp"
         android:maxLines="2"
         android:gravity="center"
-        android:background="@color/design_default_color_primary_dark"
         android:text="Item Title Placeholder that should shrink"
         android:textSize="30sp" />
 
@@ -52,6 +51,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:numColumns="3"
+
         android:horizontalSpacing="5dp"
         android:verticalSpacing="5dp"
         tools:listitem="@layout/cardview_item_in_set">

@@ -51,14 +51,13 @@ class ItemsInSetAdapter(private val context: Context, private val currentItem: I
             if (currentItem.item_name != currentItemInSet.en.item_name) {
                 cardView.setOnClickListener {
                     //Replace current fragment with new item fragment
-                    Log.i("Print", "Clicked on item ${currentItemInSet.en.item_name}")
+                    Log.i("Print", "Attempt to display item ${currentItemInSet.en.item_name}")
                 }
             }
             itemTextView.text = currentItemInSet.en.item_name
 
             val append = currentItemInSet.sub_icon ?: currentItemInSet.icon
             val fullImageUrl = "https://warframe.market/static/assets/${append}"
-            Log.i("Print", "${currentItemInSet.en.item_name} = $fullImageUrl")
             Picasso.get().load(fullImageUrl).into(itemImageView) //Add url to imageview
 
             return view
@@ -66,7 +65,4 @@ class ItemsInSetAdapter(private val context: Context, private val currentItem: I
         view.visibility = View.INVISIBLE
         return view
     }
-
-    //override fun getView(position: Int, convertView: View?, parent: ViewGroup): View?
-
 }

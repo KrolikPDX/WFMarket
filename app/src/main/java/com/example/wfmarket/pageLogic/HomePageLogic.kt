@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.wfmarket.R
 import com.example.wfmarket.models.responses.auth.AuthSigninResponse
@@ -32,7 +33,6 @@ TODO:
     -> Add sort by tag -> Get list of all tags
     -> Add search by name -> List relevant items mid type
     -> Item name in all caps
-    -> Update overall UI
 
 - ItemDetailsFragment -
     -> Back button to go to previous fragment
@@ -90,15 +90,16 @@ class HomePageLogic: AppCompatActivity(){
             val authSigningResponse = preferences.getString("AuthSigninResponse", "")
             user = Gson().fromJson(authSigningResponse, AuthSigninResponse::class.java).payload.user
         } catch(e:Exception) {
-            Log.i("Print", "Could not find authSignin in preferences ${e.stackTrace}")
+            Log.i(TAG, "Could not find authSignin in preferences ${e.stackTrace}")
         }
     }
 
     private fun setupNavigation() {
         setSupportActionBar(toolbar)
         drawerLayout.addDrawerListener(toggle)
-        toggle.syncState() //Sets up icon
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true) //Enables click-ability
+
+        //Setup navigation header text
         if (user != null && user?.ingame_name != null) {
             navigationUserName.text = user?.ingame_name
         } else if (user != null) {
@@ -142,6 +143,9 @@ class HomePageLogic: AppCompatActivity(){
         apiBuilder.setupGetRequest(getItemsUrl)
         val rawResponse = apiBuilder.executeRequest()
         tradableItems = Gson().fromJson(rawResponse, TradableItems::class.java)
-        tradableItems.payload.items = tradableItems.payload.items.shuffled() //Randomize item order
+       // tradableItems.payload.items = tradableItems.payload.items.shuffled() //Randomize item order
+        tradableItems.payload.items = tradableItems.payload.items.sortedBy {
+            it.item_name
+        }
     }
 }

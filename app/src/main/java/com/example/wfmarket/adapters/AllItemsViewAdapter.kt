@@ -3,6 +3,7 @@ package com.example.wfmarket.adapters
 import com.example.wfmarket.pageLogic.fragments.ItemDetailsFragment
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,10 +12,14 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.example.wfmarket.R
 import com.example.wfmarket.pageLogic.HomePageLogic
+import com.example.wfmarket.pageLogic.TAG
 import com.example.wfmarket.pageLogic.fragments.AllItemsFragment
 import com.example.wfmarket.pageLogic.tradableItems
 import com.squareup.picasso.Picasso
@@ -54,15 +59,38 @@ class AllItemsViewAdapter(private val context: Context?, private val hostFragmen
             .replace("/thumbs", "")}"
         Picasso.get().load(fullImageUrl).into(holder.imageView)
 
+        //When we click on an item
         holder.cardView.setOnClickListener {
             hostFragment.displayProgressBar(View.VISIBLE)
 
             val itemDetailsFragment = ItemDetailsFragment(item)
             //Replace/overlay current fragment with new fragment
-            (context as AppCompatActivity).supportFragmentManager.beginTransaction().apply {
+            var supportFragManager = (context as AppCompatActivity).supportFragmentManager
+            supportFragManager.beginTransaction().apply {
                 replace(R.id.fragmentFrame, itemDetailsFragment)
                     .addToBackStack(null)
                     .commit()
+            }
+
+            supportFragManager.addOnBackStackChangedListener {
+                var toolBar: Toolbar = context.findViewById(R.id.navigation_toolbar)
+                val oldToolBar = toolBar
+                if (itemDetailsFragment.isVisible) {
+                    toolBar.apply {
+                        navigationIcon = ContextCompat.getDrawable(context, R.drawable.ic_back_arrow)
+                        setNavigationOnClickListener {
+                            supportFragManager.popBackStack()
+                        }
+
+                    }
+                } else {
+                    toolBar.apply {
+                        navigationIcon = ContextCompat.getDrawable(context, R.drawable.ic_menu_icon)
+                        //Reset toolBar to previous state
+                        setOnClickListener(null)
+                    }
+                    context.setSupportActionBar(toolBar)
+                }
             }
         }
     }
