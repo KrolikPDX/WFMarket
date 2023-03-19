@@ -8,11 +8,16 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import com.example.wfmarket.R
 import com.example.wfmarket.models.responses.tradableItems.ItemDetailsItem
 import com.example.wfmarket.models.responses.tradableItems.Items
 import com.example.wfmarket.models.responses.tradableItems.ItemsInSet
+import com.example.wfmarket.pageLogic.TAG
+import com.example.wfmarket.pageLogic.fragments.AllItemsFragment
+import com.example.wfmarket.pageLogic.fragments.ItemDetailsFragment
+import com.example.wfmarket.pageLogic.tradableItems
 import com.squareup.picasso.Picasso
 
 //RecyclerView.Adapter<AllItemsViewAdapter.ViewHolder>()
@@ -27,31 +32,19 @@ class ItemsInSetAdapter(private val context: Context, private val currentItem: I
         itemsInSet.items_in_set = itemsInSet.items_in_set.sortedBy { it.en.item_name }
     }
 
-    override fun getCount(): Int {
-        return itemsInSet.items_in_set.size
-    }
-
-    override fun getItem(position: Int): ItemsInSet {
-        return itemsInSet.items_in_set[position]
-    }
-
-    override fun getItemId(position: Int): Long {
-        return 0
-    }
-
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View? {
         val currentItemInSet = itemsInSet.items_in_set[position]
         val view = LayoutInflater.from(context).inflate(R.layout.cardview_item_in_set, parent, false)
 
         if (itemsInSet.items_in_set.size > 1) {
-            itemTextView = view.findViewById(R.id.itemTitle)
-            itemImageView = view.findViewById(R.id.itemImage)
-            cardView = view.findViewById(R.id.cardView)
+            setupViews(view)
 
-            if (currentItem.item_name != currentItemInSet.en.item_name) {
+            if (currentItem.item_name != currentItemInSet.en.item_name) { //Prevent clicking on self
                 cardView.setOnClickListener {
-                    //Replace current fragment with new item fragment
-                    Log.i("Print", "Attempt to display item ${currentItemInSet.en.item_name}")
+                    val item = tradableItems.payload.items.find {
+                        it.item_name == currentItemInSet.en.item_name }!!
+                    //Change below for more efficient use
+                    AllItemsViewAdapter(context, AllItemsFragment()).changeFragmentItem(item)
                 }
             }
             itemTextView.text = currentItemInSet.en.item_name
@@ -64,5 +57,24 @@ class ItemsInSetAdapter(private val context: Context, private val currentItem: I
         }
         view.visibility = View.INVISIBLE
         return view
+    }
+
+    private fun setupViews(view: View) {
+        itemTextView = view.findViewById(R.id.itemTitle)
+        itemImageView = view.findViewById(R.id.itemImage)
+        cardView = view.findViewById(R.id.cardView)
+    }
+
+    //Required BaseAdapter methods
+    override fun getCount(): Int {
+        return itemsInSet.items_in_set.size
+    }
+
+    override fun getItem(position: Int): ItemsInSet {
+        return itemsInSet.items_in_set[position]
+    }
+
+    override fun getItemId(position: Int): Long {
+        return 0
     }
 }

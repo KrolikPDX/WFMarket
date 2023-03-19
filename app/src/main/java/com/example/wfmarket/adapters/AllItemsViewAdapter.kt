@@ -8,17 +8,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.example.wfmarket.R
-import com.example.wfmarket.pageLogic.HomePageLogic
+import com.example.wfmarket.models.responses.tradableItems.Items
 import com.example.wfmarket.pageLogic.TAG
 import com.example.wfmarket.pageLogic.fragments.AllItemsFragment
 import com.example.wfmarket.pageLogic.tradableItems
@@ -59,38 +57,46 @@ class AllItemsViewAdapter(private val context: Context?, private val hostFragmen
             .replace("/thumbs", "")}"
         Picasso.get().load(fullImageUrl).into(holder.imageView)
 
-        //When we click on an item
+        //When we click on an item change current fragment to ItemDetailsFragment
         holder.cardView.setOnClickListener {
-            hostFragment.displayProgressBar(View.VISIBLE)
+            changeFragmentItem(item, true)
+        }
+    }
 
-            val itemDetailsFragment = ItemDetailsFragment(item)
-            //Replace/overlay current fragment with new fragment
-            var supportFragManager = (context as AppCompatActivity).supportFragmentManager
-            supportFragManager.beginTransaction().apply {
-                replace(R.id.fragmentFrame, itemDetailsFragment)
-                    .addToBackStack(null)
-                    .commit()
-            }
+    fun changeFragmentItem(item: Items, displayProgressBar: Boolean = false) {
+        Log.i(TAG, "Changing fragment item to item: ${item.item_name}")
+        if (displayProgressBar) {
+            hostFragment.displayProgressBar(View.VISIBLE) //Display loading icon
+        }
 
-            supportFragManager.addOnBackStackChangedListener {
-                var toolBar: Toolbar = context.findViewById(R.id.navigation_toolbar)
-                val oldToolBar = toolBar
-                if (itemDetailsFragment.isVisible) {
-                    toolBar.apply {
-                        navigationIcon = ContextCompat.getDrawable(context, R.drawable.ic_back_arrow)
-                        setNavigationOnClickListener {
+        //Replace current fragment with new fragment(item)
+        val itemDetailsFragment = ItemDetailsFragment(item)
+        var supportFragManager = (context as AppCompatActivity).supportFragmentManager
+        supportFragManager.beginTransaction().apply {
+            replace(R.id.fragmentFrame, itemDetailsFragment, "ItemDetailsFragment")
+                .addToBackStack(null) //Add to backstack to recognize supportFragManager.findFragmentByTag
+                .commit()
+        }
+
+        //Change navigation icon
+        supportFragManager.addOnBackStackChangedListener {
+            var toolBar: Toolbar = context.findViewById(R.id.navigation_toolbar)
+            val isDetailsFragmentDisplayed = supportFragManager.findFragmentByTag("ItemDetailsFragment")?.isVisible
+            if (isDetailsFragmentDisplayed != null) { //Change to back button
+                toolBar.apply {
+                    navigationIcon = ContextCompat.getDrawable(context, R.drawable.ic_back_arrow)
+                    setNavigationOnClickListener {
+                        for (i in 1..supportFragManager.backStackEntryCount) {
                             supportFragManager.popBackStack()
                         }
-
                     }
-                } else {
-                    toolBar.apply {
-                        navigationIcon = ContextCompat.getDrawable(context, R.drawable.ic_menu_icon)
-                        //Reset toolBar to previous state
-                        setOnClickListener(null)
-                    }
-                    context.setSupportActionBar(toolBar)
                 }
+            } else { //Else revert changes to navigation icon
+                toolBar.apply {
+                    navigationIcon = ContextCompat.getDrawable(context, R.drawable.ic_menu_icon)
+                    setOnClickListener(null)
+                }
+                context.setSupportActionBar(toolBar)
             }
         }
     }

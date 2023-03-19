@@ -8,7 +8,6 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.wfmarket.R
 import com.example.wfmarket.models.responses.auth.AuthSigninResponse
@@ -33,16 +32,12 @@ TODO:
     -> Add sort by tag -> Get list of all tags
     -> Add search by name -> List relevant items mid type
     -> Item name in all caps
+    -> BUG: Sometimes text is set to small font though words fit
 
 - ItemDetailsFragment -
-    -> Back button to go to previous fragment
-    -> Setup basic details
-    -> List other items in set if any (https://www.geeksforgeeks.org/gridview-in-android-with-example/)
-        -> Setup gridview to display a grid of items with 2 columns
-        -> Create itemsInSet adapter to add values to each card view
-            -> Pass list of items in set to adapter
-            -> Gridview.setAdapter(adapter)
-
+    -> Setup on itemsInSet click replace current fragment with new fragment
+    -> Update ItemsInSet titles to not cut off if too long
+    -> Update ItemsInSet images to be relative
  */
 
 class HomePageLogic: AppCompatActivity(){
@@ -64,7 +59,7 @@ class HomePageLogic: AppCompatActivity(){
         setupSignin()
         setupGlobalTradeData()
         setupNavigation()
-        setupFragments()
+        setDefaultFragment()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -131,8 +126,8 @@ class HomePageLogic: AppCompatActivity(){
         }
     }
 
-    //Setup default fragment upon initial load
-    private fun setupFragments() {
+    //Change to set fragment to whatever use left off on
+    private fun setDefaultFragment() { //Setup default fragment upon initial load
         supportFragmentManager.beginTransaction().apply {
             replace(fragmentView.id, allItemsFragment)
             commit()
@@ -144,8 +139,8 @@ class HomePageLogic: AppCompatActivity(){
         val rawResponse = apiBuilder.executeRequest()
         tradableItems = Gson().fromJson(rawResponse, TradableItems::class.java)
        // tradableItems.payload.items = tradableItems.payload.items.shuffled() //Randomize item order
-        tradableItems.payload.items = tradableItems.payload.items.sortedBy {
-            it.item_name
+        tradableItems.payload.items = tradableItems.payload.items.sortedByDescending {
+            it.item_name.length
         }
     }
 }
