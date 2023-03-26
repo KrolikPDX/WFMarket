@@ -6,28 +6,49 @@
     android:id="@+id/relativeLayout"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        xmlns:tools="http://schemas.android.com/tools">
+        android:orientation="vertical">
 
-        <com.lb.auto_fit_textview.AutoResizeTextView
-            android:id="@+id/itemTitle"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="75dp"
-            android:paddingHorizontal="60dp"
-            android:maxLines="2"
-            android:gravity="center"
-            android:text="Item Title Placeholder that should shrink"
-            android:textSize="30sp" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.lb.auto_fit_textview.AutoResizeTextView
+                android:id="@+id/itemTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="75dp"
+                android:layout_marginLeft="50dp"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:maxLines="2"
+                android:text="Item Title Placeholder that should shrink once theres too much"
+                android:textSize="30sp"
+                android:layout_weight="1"
+                />
+
+            <Button
+                android:id="@+id/wikiLinkButton"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:fitsSystemWindows="true"
+                android:layout_gravity="center"
+                android:scaleType="fitCenter"
+                android:layout_marginHorizontal="10dp"
+                android:background="@drawable/ic_info_icon"/>
+
+        </LinearLayout>
+
+
 
 
         <ImageView
             android:id="@+id/itemImage"
             android:layout_width="match_parent"
-            android:layout_height="175dp"
+            android:layout_height="125dp"
             android:layout_marginTop="10dp"
             android:layout_gravity="center_horizontal"
             android:src="@drawable/ic_launcher_background" />
@@ -48,35 +69,39 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:gravity="center"
-            android:maxLines="3"
+            android:maxLines="5"
             android:padding="10dp"
             android:text="Item Description "
             android:textSize="20sp" />
-
-        <!-- View Contains:
-        1. Item Name
-        2. Item image
-        3. Item Description
-        4. Item Rarity?
-        5. Other items in set
-        6. Wiki link?
-        7. Fav icon
-        -->
-
     </LinearLayout>
 
-    <!-- Change to not overlap linearLayout if too many items -->
-    <GridView
-        android:id="@+id/itemInSetGridView"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_marginVertical="10dp"
-        android:numColumns="3"
-        android:horizontalSpacing="5dp"
-        android:verticalSpacing="5dp"
-        android:layout_alignBottom="@id/linearLayout"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_alignBottom="@id/linearLayout"
+        android:orientation="vertical">
 
-        tools:listitem="@layout/cardview_item_in_set">
-    </GridView>
+        <TextView
+            android:id="@+id/itemsInSetText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:gravity="center"
+            android:textAllCaps="true"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:text="Items in set:" />
+
+        <GridView
+            android:id="@+id/itemInSetGridView"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_marginVertical="10dp"
+            android:numColumns="3"
+            android:gravity="bottom"
+            android:horizontalSpacing="5dp"
+            android:verticalSpacing="5dp"
+            tools:listitem="@layout/cardview_item_in_set"/>
+    </LinearLayout>
 </RelativeLayout>

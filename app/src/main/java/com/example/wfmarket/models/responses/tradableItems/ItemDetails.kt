@@ -26,7 +26,9 @@ data class ItemsInSet (
     val icon_format: String,
     val sub_icon: Any? = null,
     val id: String,
-    val en: CS,
+    val en: CS
+)
+
     /*
     val ru: com.example.wfmarket.models.responses.tradableItems.CS,
     val ko: com.example.wfmarket.models.responses.tradableItems.CS,
@@ -44,7 +46,8 @@ data class ItemsInSet (
     val es: com.example.wfmarket.models.responses.tradableItems.CS,
     val pl: com.example.wfmarket.models.responses.tradableItems.CS,
     val cs: com.example.wfmarket.models.responses.tradableItems.CS */
-)
+
+
 
 data class CS (
     val item_name: String,
