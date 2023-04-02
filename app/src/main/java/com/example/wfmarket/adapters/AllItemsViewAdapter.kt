@@ -2,6 +2,7 @@ package com.example.wfmarket.adapters
 
 import com.example.wfmarket.pageLogic.fragments.ItemDetailsFragment
 import android.content.Context
+import android.opengl.Visibility
 import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
@@ -78,9 +79,11 @@ class AllItemsViewAdapter(private val context: Context?, private val hostFragmen
                 .commit()
         }
 
-        //Change navigation icon
+        //Change navigation icons
         supportFragManager.addOnBackStackChangedListener {
             var toolBar: Toolbar = context.findViewById(R.id.navigation_toolbar)
+            var searchBar:Toolbar = context.findViewById(R.id.search_toolbar)
+
             val isDetailsFragmentDisplayed = supportFragManager.findFragmentByTag("ItemDetailsFragment")?.isVisible
             if (isDetailsFragmentDisplayed != null) { //Change to back button
                 toolBar.apply {
@@ -91,11 +94,13 @@ class AllItemsViewAdapter(private val context: Context?, private val hostFragmen
                         }
                     }
                 }
+                searchBar.visibility = View.GONE
             } else { //Else revert changes to navigation icon
                 toolBar.apply {
                     navigationIcon = ContextCompat.getDrawable(context, R.drawable.ic_menu_icon)
                     setOnClickListener(null)
                 }
+                searchBar.visibility = View.VISIBLE
                 context.setSupportActionBar(toolBar)
             }
         }

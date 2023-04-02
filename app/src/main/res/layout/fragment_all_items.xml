@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/progressBar"
-        android:padding="10dp"
+        android:layout_marginTop="55dp"
         tools:listitem="@layout/cardview_item"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:spanCount="2"/>

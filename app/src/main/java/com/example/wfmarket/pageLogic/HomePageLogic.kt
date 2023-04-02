@@ -42,6 +42,7 @@ TODO:
 
 class HomePageLogic: AppCompatActivity(){
     private lateinit var toolbar: Toolbar
+    private lateinit var searchBar: Toolbar
     private lateinit var toggle:ActionBarDrawerToggle
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
@@ -71,6 +72,7 @@ class HomePageLogic: AppCompatActivity(){
 
     private fun setupParams() {
         toolbar = findViewById(R.id.navigation_toolbar)
+        searchBar = findViewById(R.id.search_toolbar)
 
         drawerLayout = findViewById(R.id.drawerLayout)
         navigationView = findViewById(R.id.navigationView)
@@ -93,6 +95,10 @@ class HomePageLogic: AppCompatActivity(){
         setSupportActionBar(toolbar)
         drawerLayout.addDrawerListener(toggle)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true) //Enables click-ability
+
+        searchBar.setOnClickListener {
+
+        }
 
         //Setup navigation header text
         if (user != null && user?.ingame_name != null) {
@@ -138,9 +144,7 @@ class HomePageLogic: AppCompatActivity(){
         apiBuilder.setupGetRequest(getItemsUrl)
         val rawResponse = apiBuilder.executeRequest()
         tradableItems = Gson().fromJson(rawResponse, TradableItems::class.java)
-       // tradableItems.payload.items = tradableItems.payload.items.shuffled() //Randomize item order
-        tradableItems.payload.items = tradableItems.payload.items.sortedByDescending {
-            it.item_name.length
-        }
+        //tradableItems.payload.items = tradableItems.payload.items.shuffled() //Randomize item order
+        tradableItems.payload.items = tradableItems.payload.items.sortedByDescending { it.item_name.length }
     }
 }

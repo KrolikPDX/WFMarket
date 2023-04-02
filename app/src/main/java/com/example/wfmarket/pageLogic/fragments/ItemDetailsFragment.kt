@@ -94,7 +94,6 @@ class ItemDetailsFragment(private val item: Items) : Fragment() {
             startActivity(browserIntent)
         }
 
-
         if (itemDetailsItem.items_in_set.size <= 1) {
             itemsInSetText.visibility = View.INVISIBLE
         }

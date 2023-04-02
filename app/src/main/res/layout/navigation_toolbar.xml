@@ -4,13 +4,27 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.appcompat.widget.Toolbar
-        android:layout_width="30dp"
-        android:layout_height="25dp"
-        android:id="@+id/navigation_toolbar"
-        app:navigationIcon="@drawable/ic_menu_icon"
-        android:layout_margin="15dp">
-    </androidx.appcompat.widget.Toolbar>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.Toolbar
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:id="@+id/navigation_toolbar"
+            android:layout_alignParentLeft="true"
+            app:navigationIcon="@drawable/ic_menu_icon"
+            android:layout_margin="15dp"/>
+
+        <androidx.appcompat.widget.Toolbar
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/search_toolbar"
+            android:layout_alignParentRight="true"
+            app:navigationIcon="@drawable/ic_search_icon"
+            android:layout_margin="15dp"/>
+    </RelativeLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
