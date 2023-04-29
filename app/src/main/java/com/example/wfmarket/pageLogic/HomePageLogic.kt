@@ -2,6 +2,8 @@ package com.example.wfmarket.pageLogic
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
+import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -42,10 +44,13 @@ TODO:
 
 class HomePageLogic: AppCompatActivity(){
     private lateinit var toolbar: Toolbar
-    private lateinit var searchBar: Toolbar
+    private lateinit var searchButton: Toolbar
+    private lateinit var searchTextbox: EditText
     private lateinit var toggle:ActionBarDrawerToggle
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
+
+    private var isSearchTextboxOpen: Boolean = false
 
     private lateinit var fragmentView: FrameLayout
     private val buySellFragment = BuySellFragment()
@@ -72,7 +77,9 @@ class HomePageLogic: AppCompatActivity(){
 
     private fun setupParams() {
         toolbar = findViewById(R.id.navigation_toolbar)
-        searchBar = findViewById(R.id.search_toolbar)
+        searchButton = findViewById(R.id.search_toolbar)
+        searchTextbox = findViewById(R.id.searchTextbox)
+        searchTextbox.visibility = View.INVISIBLE
 
         drawerLayout = findViewById(R.id.drawerLayout)
         navigationView = findViewById(R.id.navigationView)
@@ -96,8 +103,23 @@ class HomePageLogic: AppCompatActivity(){
         drawerLayout.addDrawerListener(toggle)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true) //Enables click-ability
 
-        searchBar.setOnClickListener {
+        searchButton.setOnClickListener {
+            if (!isSearchTextboxOpen && searchTextbox.visibility == View.INVISIBLE) {
+                searchTextbox.text.clear()
+                searchTextbox.visibility = View.VISIBLE
+                isSearchTextboxOpen = true
+            } else if (isSearchTextboxOpen && searchTextbox.visibility == View.VISIBLE) {
+                Log.i(TAG, "First Item = ${tradableItems.payload.items[0].item_name}")
+                for(i in 0..10) {
+                    var value = tradableItems.payload.items[i].item_name.compareTo(searchTextbox.text.toString(), true)
+                    Log.i(TAG, "Compare ${searchTextbox.text.toString()} to ${tradableItems.payload.items[i].item_name} = $value")
+                }
+                Log.i(TAG, "New Item = ${tradableItems.payload.items[0].item_name}")
 
+                //Reset recycle view with updated list
+                searchTextbox.visibility = View.INVISIBLE
+                isSearchTextboxOpen = false
+            }
         }
 
         //Setup navigation header text
