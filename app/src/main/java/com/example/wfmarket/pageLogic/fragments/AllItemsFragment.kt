@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.wfmarket.R
 import com.example.wfmarket.adapters.AllItemsViewAdapter
 import com.example.wfmarket.pageLogic.TAG
+import okhttp3.internal.notify
 
 class AllItemsFragment : Fragment() {
     private lateinit var rootView:View
@@ -35,6 +36,7 @@ class AllItemsFragment : Fragment() {
             }
         }
         recyclerView.addOnScrollListener(onScroll)
+
         return rootView
     }
 
@@ -43,6 +45,10 @@ class AllItemsFragment : Fragment() {
         progressBar = rootView.findViewById(R.id.progressBar)
         layoutManager = LinearLayoutManager(this.requireContext(), LinearLayoutManager.VERTICAL, false)
         recyclerView.adapter = AllItemsViewAdapter(this.requireContext(), this)
+    }
+
+    fun refreshRecyclerView() {
+        recyclerView.adapter!!.notifyDataSetChanged()
     }
 
     fun displayProgressBar(display: Int) {

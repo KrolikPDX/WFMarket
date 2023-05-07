@@ -21,7 +21,7 @@
             android:id="@+id/searchTextbox"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_margin="15dp"
+            android:layout_margin="13dp"
             android:gravity="center_vertical"
             android:layout_weight="1"
             android:hint="Search for item" />

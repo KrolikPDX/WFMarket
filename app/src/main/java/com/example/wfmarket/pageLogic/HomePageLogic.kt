@@ -1,8 +1,14 @@
 package com.example.wfmarket.pageLogic
+import android.content.Context
+import android.graphics.drawable.Icon
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.text.method.KeyListener
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.TextView
@@ -10,8 +16,11 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.get
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.wfmarket.R
+import com.example.wfmarket.adapters.AllItemsViewAdapter
+import com.example.wfmarket.helpers.hideKeyboard
 import com.example.wfmarket.models.responses.auth.AuthSigninResponse
 import com.example.wfmarket.models.responses.auth.User
 import com.example.wfmarket.models.responses.tradableItems.TradableItems
@@ -19,7 +28,7 @@ import com.example.wfmarket.pageLogic.fragments.AllItemsFragment
 import com.example.wfmarket.pageLogic.fragments.BuySellFragment
 import com.google.android.material.navigation.NavigationView
 import com.google.gson.Gson
-
+import okhttp3.internal.notify
 
 var user: User? = null
 
@@ -44,19 +53,38 @@ TODO:
 
 class HomePageLogic: AppCompatActivity(){
     private lateinit var toolbar: Toolbar
-    private lateinit var searchButton: Toolbar
-    private lateinit var searchTextbox: EditText
+    lateinit var searchButton: Toolbar
+    lateinit var searchTextbox: EditText
     private lateinit var toggle:ActionBarDrawerToggle
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
-
-    private var isSearchTextboxOpen: Boolean = false
 
     private lateinit var fragmentView: FrameLayout
     private val buySellFragment = BuySellFragment()
     private val allItemsFragment = AllItemsFragment()
 
     private lateinit var navigationUserName: TextView
+
+    private val textWatcher = object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            tradableItems.payload.items = tradableItems.payload.items.sortedByDescending {
+                it.item_name.compareTo(s.toString(), true)
+            }
+            (supportFragmentManager.findFragmentByTag("AllItemsFragment") as AllItemsFragment).refreshRecyclerView()
+
+            //If user pressed enter, remove whitespace and close search
+            if (s.toString().contains("\n")) {
+                searchTextbox.visibility = View.INVISIBLE
+                searchButton.setNavigationIcon(R.drawable.ic_search_icon)
+                searchTextbox.setText(s.toString().replace(Regex("\n"), ""))
+                searchTextbox.hideKeyboard()
+            }
+        }
+
+        override fun afterTextChanged(s: Editable?) {}
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,7 +108,6 @@ class HomePageLogic: AppCompatActivity(){
         searchButton = findViewById(R.id.search_toolbar)
         searchTextbox = findViewById(R.id.searchTextbox)
         searchTextbox.visibility = View.INVISIBLE
-
         drawerLayout = findViewById(R.id.drawerLayout)
         navigationView = findViewById(R.id.navigationView)
         fragmentView = findViewById(R.id.fragmentFrame)
@@ -102,23 +129,15 @@ class HomePageLogic: AppCompatActivity(){
         setSupportActionBar(toolbar)
         drawerLayout.addDrawerListener(toggle)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true) //Enables click-ability
+        searchTextbox.addTextChangedListener(textWatcher)
 
-        searchButton.setOnClickListener {
-            if (!isSearchTextboxOpen && searchTextbox.visibility == View.INVISIBLE) {
-                searchTextbox.text.clear()
+        searchButton.setOnClickListener { //If we click on search icon display search bar, change icon to close search bar
+            if (searchTextbox.visibility == View.INVISIBLE) {
                 searchTextbox.visibility = View.VISIBLE
-                isSearchTextboxOpen = true
-            } else if (isSearchTextboxOpen && searchTextbox.visibility == View.VISIBLE) {
-                Log.i(TAG, "First Item = ${tradableItems.payload.items[0].item_name}")
-                for(i in 0..10) {
-                    var value = tradableItems.payload.items[i].item_name.compareTo(searchTextbox.text.toString(), true)
-                    Log.i(TAG, "Compare ${searchTextbox.text.toString()} to ${tradableItems.payload.items[i].item_name} = $value")
-                }
-                Log.i(TAG, "New Item = ${tradableItems.payload.items[0].item_name}")
-
-                //Reset recycle view with updated list
+                searchButton.setNavigationIcon(R.drawable.ic_close_icon)
+            } else {
                 searchTextbox.visibility = View.INVISIBLE
-                isSearchTextboxOpen = false
+                searchButton.setNavigationIcon(R.drawable.ic_search_icon)
             }
         }
 
@@ -135,13 +154,13 @@ class HomePageLogic: AppCompatActivity(){
             when (it.itemId) {
                 R.id.navigation_buySell -> {
                     supportFragmentManager.beginTransaction().apply {
-                        replace(fragmentView.id, buySellFragment)
+                        replace(fragmentView.id, buySellFragment, "BuySellFragment")
                         commit()
                     }
                 }
                 R.id.navigation_items -> {
                     supportFragmentManager.beginTransaction().apply {
-                        replace(fragmentView.id, allItemsFragment)
+                        replace(fragmentView.id, allItemsFragment, "AllItemsFragment")
                         commit()
                     }
                 }
@@ -157,7 +176,7 @@ class HomePageLogic: AppCompatActivity(){
     //Change to set fragment to whatever use left off on
     private fun setDefaultFragment() { //Setup default fragment upon initial load
         supportFragmentManager.beginTransaction().apply {
-            replace(fragmentView.id, allItemsFragment)
+            replace(fragmentView.id, allItemsFragment, "AllItemsFragment")
             commit()
         }
     }

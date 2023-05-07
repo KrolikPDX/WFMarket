@@ -17,7 +17,9 @@ import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.wfmarket.R
+import com.example.wfmarket.helpers.hideKeyboard
 import com.example.wfmarket.models.responses.tradableItems.Items
+import com.example.wfmarket.pageLogic.HomePageLogic
 import com.example.wfmarket.pageLogic.TAG
 import com.example.wfmarket.pageLogic.fragments.AllItemsFragment
 import com.example.wfmarket.pageLogic.tradableItems
@@ -65,7 +67,6 @@ class AllItemsViewAdapter(private val context: Context?, private val hostFragmen
     }
 
     fun changeFragmentItem(item: Items, displayProgressBar: Boolean = false) {
-        Log.i(TAG, "Changing fragment item to item: ${item.item_name}")
         if (displayProgressBar) {
             hostFragment.displayProgressBar(View.VISIBLE) //Display loading icon
         }
@@ -73,6 +74,9 @@ class AllItemsViewAdapter(private val context: Context?, private val hostFragmen
         //Replace current fragment with new fragment(item)
         val itemDetailsFragment = ItemDetailsFragment(item)
         var supportFragManager = (context as AppCompatActivity).supportFragmentManager
+        (context as HomePageLogic).searchTextbox.hideKeyboard()
+        context.searchButton.setNavigationIcon(R.drawable.ic_search_icon)
+        context.searchTextbox.visibility = View.INVISIBLE
         supportFragManager.beginTransaction().apply {
             replace(R.id.fragmentFrame, itemDetailsFragment, "ItemDetailsFragment")
                 .addToBackStack(null) //Add to backstack to recognize supportFragManager.findFragmentByTag
