@@ -1,52 +1,57 @@
 package com.example.wfmarket.pageLogic.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.OnClickListener
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.TextView
+import android.widget.ProgressBar
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.wfmarket.R
-import com.example.wfmarket.pageLogic.tradableItems
+import com.example.wfmarket.adapters.BuySellViewAdapter
+import com.example.wfmarket.pageLogic.TAG
+import okhttp3.internal.notify
 
 class BuySellFragment : Fragment() {
-    var itemIndex:Int = 0
     private lateinit var rootView:View
-    private lateinit var titleTextView:TextView
-    private lateinit var nextButton:Button
-
-
+    private lateinit var progressBar: ProgressBar
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var layoutManager: LinearLayoutManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = inflater.inflate(R.layout.fragment_buy_sell, container, false)
         setupParams()
+        val onScroll = object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) { //Dy = rate at which we scroll
+                if (recyclerView.layoutManager?.findViewByPosition(0)?.display != null) {
+                    //Item 0 is displayed
+                }
+            }
+        }
+        recyclerView.addOnScrollListener(onScroll)
 
-
-        titleTextView.text = tradableItems.payload.items[itemIndex].item_name
-        nextButton.setOnClickListener(nextButtonPress())
-        // Inflate the layout for this fragment
         return rootView
     }
 
     private fun setupParams() {
-        titleTextView = rootView.findViewById(R.id.titleTextView)
-        nextButton = rootView.findViewById(R.id.nextButton)
+        recyclerView = rootView.findViewById(R.id.buySellRecyclerView)
+        progressBar = rootView.findViewById(R.id.buySellProgressBar)
+        layoutManager = LinearLayoutManager(this.requireContext(), LinearLayoutManager.VERTICAL, false)
+        recyclerView.adapter = BuySellViewAdapter(this.requireContext(), this)
     }
 
-    private fun nextButtonPress():OnClickListener {
-        return OnClickListener {
-            itemIndex++
-            var itemName = tradableItems.payload.items[itemIndex].item_name
-            titleTextView.text = itemName
-        }
+    fun refreshRecyclerView() {
+        recyclerView.adapter!!.notifyDataSetChanged()
+    }
+
+    fun displayProgressBar(display: Int) {
+        progressBar.visibility = display
     }
 }
+

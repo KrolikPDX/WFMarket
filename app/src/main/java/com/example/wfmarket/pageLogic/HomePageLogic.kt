@@ -1,14 +1,10 @@
 package com.example.wfmarket.pageLogic
-import android.content.Context
-import android.graphics.drawable.Icon
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.text.method.KeyListener
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.TextView
@@ -16,10 +12,8 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.get
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.wfmarket.R
-import com.example.wfmarket.adapters.AllItemsViewAdapter
 import com.example.wfmarket.helpers.hideKeyboard
 import com.example.wfmarket.models.responses.auth.AuthSigninResponse
 import com.example.wfmarket.models.responses.auth.User
@@ -28,7 +22,6 @@ import com.example.wfmarket.pageLogic.fragments.AllItemsFragment
 import com.example.wfmarket.pageLogic.fragments.BuySellFragment
 import com.google.android.material.navigation.NavigationView
 import com.google.gson.Gson
-import okhttp3.internal.notify
 
 var user: User? = null
 
@@ -64,28 +57,6 @@ class HomePageLogic: AppCompatActivity(){
     private val allItemsFragment = AllItemsFragment()
 
     private lateinit var navigationUserName: TextView
-
-    private val textWatcher = object : TextWatcher {
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            tradableItems.payload.items = tradableItems.payload.items.sortedByDescending {
-                it.item_name.compareTo(s.toString(), true)
-            }
-            (supportFragmentManager.findFragmentByTag("AllItemsFragment") as AllItemsFragment).refreshRecyclerView()
-
-            //If user pressed enter, remove whitespace and close search
-            if (s.toString().contains("\n")) {
-                searchTextbox.visibility = View.INVISIBLE
-                searchButton.setNavigationIcon(R.drawable.ic_search_icon)
-                searchTextbox.setText(s.toString().replace(Regex("\n"), ""))
-                searchTextbox.hideKeyboard()
-            }
-        }
-
-        override fun afterTextChanged(s: Editable?) {}
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home_page)
@@ -129,7 +100,7 @@ class HomePageLogic: AppCompatActivity(){
         setSupportActionBar(toolbar)
         drawerLayout.addDrawerListener(toggle)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true) //Enables click-ability
-        searchTextbox.addTextChangedListener(textWatcher)
+        searchTextbox.addTextChangedListener(searchTextWatcher)
 
         searchButton.setOnClickListener { //If we click on search icon display search bar, change icon to close search bar
             if (searchTextbox.visibility == View.INVISIBLE) {
@@ -185,7 +156,31 @@ class HomePageLogic: AppCompatActivity(){
         apiBuilder.setupGetRequest(getItemsUrl)
         val rawResponse = apiBuilder.executeRequest()
         tradableItems = Gson().fromJson(rawResponse, TradableItems::class.java)
-        //tradableItems.payload.items = tradableItems.payload.items.shuffled() //Randomize item order
-        tradableItems.payload.items = tradableItems.payload.items.sortedByDescending { it.item_name.length }
+        tradableItems.payload.items = tradableItems.payload.items.shuffled() //Randomize item order
+    }
+
+    private val searchTextWatcher = object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            tradableItems.payload.items = tradableItems.payload.items.sortedByDescending {
+                it.item_name.compareTo(s.toString(), true)
+            }
+            if (supportFragmentManager.fragments[0].javaClass == AllItemsFragment::class.java) {
+                (supportFragmentManager.findFragmentByTag("AllItemsFragment") as AllItemsFragment).refreshRecyclerView()
+            } else if (supportFragmentManager.fragments[0].javaClass == BuySellFragment::class.java) {
+                (supportFragmentManager.findFragmentByTag("BuySellFragment") as BuySellFragment).refreshRecyclerView()
+            }
+
+            //If user pressed enter, remove whitespace and close search
+            if (s.toString().contains("\n")) {
+                searchTextbox.visibility = View.INVISIBLE
+                searchButton.setNavigationIcon(R.drawable.ic_search_icon)
+                searchTextbox.setText(s.toString().replace(Regex("\n"), ""))
+                searchTextbox.hideKeyboard()
+            }
+        }
+
+        override fun afterTextChanged(s: Editable?) {}
     }
 }
