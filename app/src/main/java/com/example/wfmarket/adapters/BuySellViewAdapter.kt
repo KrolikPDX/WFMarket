@@ -1,5 +1,6 @@
 package com.example.wfmarket.adapters
 
+import android.content.ClipData
 import com.example.wfmarket.pageLogic.fragments.ItemDetailsFragment
 import android.content.Context
 import android.opengl.Visibility
@@ -18,12 +19,17 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.wfmarket.R
 import com.example.wfmarket.helpers.hideKeyboard
+import com.example.wfmarket.models.responses.tradableItems.ItemDetails
+import com.example.wfmarket.models.responses.tradableItems.ItemOrders
 import com.example.wfmarket.models.responses.tradableItems.Items
+import com.example.wfmarket.models.responses.tradableItems.Order
 import com.example.wfmarket.pageLogic.HomePageLogic
 import com.example.wfmarket.pageLogic.TAG
+import com.example.wfmarket.pageLogic.apiBuilder
 import com.example.wfmarket.pageLogic.fragments.AllItemsFragment
 import com.example.wfmarket.pageLogic.fragments.BuySellFragment
 import com.example.wfmarket.pageLogic.tradableItems
+import com.google.gson.Gson
 import com.squareup.picasso.Picasso
 
 
@@ -37,10 +43,12 @@ class BuySellViewAdapter(private val context: Context?, private val hostFragment
 
     //Initialize card view elements by ID
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val buyItemPrice: TextView
         val itemTitleView: TextView
         val imageView:ImageView
         val cardView: CardView
         init {
+            buyItemPrice = itemView.findViewById(R.id.buyItemPrice)
             itemTitleView = itemView.findViewById(R.id.buyItemTitle)
             imageView = itemView.findViewById(R.id.buyItemImage)
             cardView = itemView.findViewById(R.id.buyItemCardView)
@@ -56,6 +64,9 @@ class BuySellViewAdapter(private val context: Context?, private val hostFragment
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = tradableItems.payload.items[position]
+
+        //Run async, show progress bar while we wait for reply.
+        holder.buyItemPrice.text = getItemPrice(item)  + " plat"
         holder.itemTitleView.text = item.item_name
         val fullImageUrl = "https://warframe.market/static/assets/${item.thumb.replace(".128x128", "")
             .replace("/thumbs", "")}"
@@ -65,6 +76,15 @@ class BuySellViewAdapter(private val context: Context?, private val hostFragment
         holder.cardView.setOnClickListener {
             changeFragmentItem(item, true)
         }
+    }
+
+    private fun getItemPrice(item: Items): String{
+        Log.i(TAG, "Looking for item price ${item.url_name}")
+        apiBuilder.setupGetRequest("https://api.warframe.market/v1/items/${item.url_name}/orders")
+        val response = apiBuilder.executeRequest()
+        var itemOrders: List<Order> = Gson().fromJson(response, ItemOrders::class.java).payload.orders
+        Log.i(TAG, "Found item price ${itemOrders[0].platinum}")
+        return itemOrders[0].platinum.toString()
     }
 
     private fun changeFragmentItem(item: Items, displayProgressBar: Boolean = false) {
