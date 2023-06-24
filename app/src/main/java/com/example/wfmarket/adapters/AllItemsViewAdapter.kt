@@ -59,7 +59,6 @@ class AllItemsViewAdapter(private val context: Context?, private val hostFragmen
         val fullImageUrl = "https://warframe.market/static/assets/${item.thumb.replace(".128x128", "")
             .replace("/thumbs", "")}"
         Picasso.get().load(fullImageUrl).into(holder.imageView)
-
         //When we click on an item change current fragment to ItemDetailsFragment
         holder.cardView.setOnClickListener {
             changeFragmentItem(item, true)

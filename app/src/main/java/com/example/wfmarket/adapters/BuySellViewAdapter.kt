@@ -1,11 +1,10 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.wfmarket.adapters
 
-import android.content.ClipData
-import com.example.wfmarket.pageLogic.fragments.ItemDetailsFragment
 import android.content.Context
-import android.opengl.Visibility
+import android.os.AsyncTask
 import android.os.Build
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,17 +18,12 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.wfmarket.R
 import com.example.wfmarket.helpers.hideKeyboard
-import com.example.wfmarket.models.responses.tradableItems.ItemDetails
-import com.example.wfmarket.models.responses.tradableItems.ItemOrders
 import com.example.wfmarket.models.responses.tradableItems.Items
-import com.example.wfmarket.models.responses.tradableItems.Order
 import com.example.wfmarket.pageLogic.HomePageLogic
-import com.example.wfmarket.pageLogic.TAG
-import com.example.wfmarket.pageLogic.apiBuilder
-import com.example.wfmarket.pageLogic.fragments.AllItemsFragment
 import com.example.wfmarket.pageLogic.fragments.BuySellFragment
+import com.example.wfmarket.pageLogic.fragments.ItemDetailsFragment
 import com.example.wfmarket.pageLogic.tradableItems
-import com.google.gson.Gson
+import com.squareup.picasso.Downloader
 import com.squareup.picasso.Picasso
 
 
@@ -63,10 +57,8 @@ class BuySellViewAdapter(private val context: Context?, private val hostFragment
     //OnCardView create: Add data to card view elements
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = tradableItems.payload.items[position]
-
-        //Run async, show progress bar while we wait for reply.
-        holder.buyItemPrice.text = getItemPrice(item)  + " plat"
+        val item: Items = tradableItems.payload.items[position]
+        //GetItemPrice()
         holder.itemTitleView.text = item.item_name
         val fullImageUrl = "https://warframe.market/static/assets/${item.thumb.replace(".128x128", "")
             .replace("/thumbs", "")}"
@@ -76,15 +68,6 @@ class BuySellViewAdapter(private val context: Context?, private val hostFragment
         holder.cardView.setOnClickListener {
             changeFragmentItem(item, true)
         }
-    }
-
-    private fun getItemPrice(item: Items): String{
-        Log.i(TAG, "Looking for item price ${item.url_name}")
-        apiBuilder.setupGetRequest("https://api.warframe.market/v1/items/${item.url_name}/orders")
-        val response = apiBuilder.executeRequest()
-        var itemOrders: List<Order> = Gson().fromJson(response, ItemOrders::class.java).payload.orders
-        Log.i(TAG, "Found item price ${itemOrders[0].platinum}")
-        return itemOrders[0].platinum.toString()
     }
 
     private fun changeFragmentItem(item: Items, displayProgressBar: Boolean = false) {
@@ -131,3 +114,33 @@ class BuySellViewAdapter(private val context: Context?, private val hostFragment
         }
     }
 }
+
+private class GetItemPrice : AsyncTask<Items, Int?, TextView>() {
+    override fun doInBackground(vararg urls: Items): TextView? {
+
+        var totalSize: Long = 0
+
+        return null
+    }
+
+    override fun onProgressUpdate(vararg progress: Int?) {
+        //Set to progress bar while we wait to retrieve price
+        //setProgressPercent(progress[0])
+    }
+
+    override fun onPostExecute(textView: TextView) {
+        //textView.text =
+    }
+}
+
+/*
+private fun getItemPrice(item: Items): String{
+    Log.i(TAG, "Looking for item price ${item.url_name}")
+    apiBuilder.setupGetRequest("https://api.warframe.market/v1/items/${item.url_name}/orders")
+    val response = apiBuilder.executeRequest()
+    var itemOrders: List<Order> = Gson().fromJson(response, ItemOrders::class.java).payload.orders
+    Log.i(TAG, "Found item price ${itemOrders[0].platinum}")
+    return itemOrders[0].platinum.toString()
+}
+*/
+

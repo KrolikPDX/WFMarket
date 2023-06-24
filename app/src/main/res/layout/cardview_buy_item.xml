@@ -24,7 +24,7 @@
                 android:id="@+id/buyItemPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="100p"
+                android:text="placeholder"
                 android:gravity="center"
                 android:paddingHorizontal="10dp"
                 android:layout_gravity="right"

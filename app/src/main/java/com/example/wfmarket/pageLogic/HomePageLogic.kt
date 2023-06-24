@@ -25,25 +25,6 @@ import com.google.gson.Gson
 
 var user: User? = null
 
-/*
-TODO:
-- Overall -
-    -> Update theme / UI
-
-- AllItemsFragment -
-    -> Update CardView to include cropped picture with title underneath
-        -> Fav item icon if user is logged in?
-    -> Add sort by tag -> Get list of all tags
-    -> Add search by name -> List relevant items mid type
-    -> Item name in all caps
-    -> BUG: Sometimes text is set to small font though words fit
-
-- ItemDetailsFragment -
-    -> Setup on itemsInSet click replace current fragment with new fragment
-    -> Update ItemsInSet titles to not cut off if too long
-    -> Update ItemsInSet images to be relative
- */
-
 class HomePageLogic: AppCompatActivity(){
     private lateinit var toolbar: Toolbar
     lateinit var searchButton: Toolbar
