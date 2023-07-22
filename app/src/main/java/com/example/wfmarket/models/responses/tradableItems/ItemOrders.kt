@@ -90,20 +90,7 @@ data class User (
 
     val id: String,
     val region: Region,
-    val status: Status
+    val status: String
 )
 
-enum class Status(val value: String) {
-    Ingame("ingame"),
-    Offline("offline"),
-    Online("online");
 
-    companion object {
-        public fun fromValue(value: String): Status = when (value) {
-            "ingame"  -> Ingame
-            "offline" -> Offline
-            "online"  -> Online
-            else      -> throw IllegalArgumentException()
-        }
-    }
-}

@@ -9,6 +9,7 @@ data class TradableItemsPayload (
 )
 
 data class Items(
+    var orders: List<Order>,
     val id:String,
     val url_name:String,
     val thumb: String,

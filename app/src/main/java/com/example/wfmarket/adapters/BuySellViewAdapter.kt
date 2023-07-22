@@ -5,6 +5,7 @@ package com.example.wfmarket.adapters
 import android.content.Context
 import android.os.AsyncTask
 import android.os.Build
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,13 +19,19 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.wfmarket.R
 import com.example.wfmarket.helpers.hideKeyboard
+import com.example.wfmarket.models.responses.tradableItems.ItemOrders
 import com.example.wfmarket.models.responses.tradableItems.Items
+import com.example.wfmarket.models.responses.tradableItems.Order
 import com.example.wfmarket.pageLogic.HomePageLogic
+import com.example.wfmarket.pageLogic.TAG
+import com.example.wfmarket.pageLogic.apiBuilder
 import com.example.wfmarket.pageLogic.fragments.BuySellFragment
 import com.example.wfmarket.pageLogic.fragments.ItemDetailsFragment
 import com.example.wfmarket.pageLogic.tradableItems
+import com.google.gson.Gson
 import com.squareup.picasso.Downloader
 import com.squareup.picasso.Picasso
+import java.util.*
 
 
 class BuySellViewAdapter(private val context: Context?, private val hostFragment: BuySellFragment) : RecyclerView.Adapter<BuySellViewAdapter.ViewHolder>() {
@@ -58,16 +65,21 @@ class BuySellViewAdapter(private val context: Context?, private val hostFragment
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item: Items = tradableItems.payload.items[position]
-        //GetItemPrice()
         holder.itemTitleView.text = item.item_name
         val fullImageUrl = "https://warframe.market/static/assets/${item.thumb.replace(".128x128", "")
             .replace("/thumbs", "")}"
         Picasso.get().load(fullImageUrl).into(holder.imageView)
-
+        holder.buyItemPrice.SetItemPrice(item)
         //When we click on an item change current fragment to ItemDetailsFragment
         holder.cardView.setOnClickListener {
             changeFragmentItem(item, true)
         }
+    }
+
+    private fun TextView.SetItemPrice(item: Items) {
+        var getItemPrice = GetItemPrice()
+        getItemPrice.currentView = this
+        getItemPrice.execute(item)
     }
 
     private fun changeFragmentItem(item: Items, displayProgressBar: Boolean = false) {
@@ -113,25 +125,35 @@ class BuySellViewAdapter(private val context: Context?, private val hostFragment
             }
         }
     }
+
+    class GetItemPrice : AsyncTask<Items, Int?, Items>() {
+        public lateinit var currentView: TextView
+
+        override fun doInBackground(vararg items: Items): Items {
+            Log.i(TAG, "Looking for item price ${items[0].url_name}")
+            apiBuilder.setupGetRequest("https://api.warframe.market/v1/items/${items[0].url_name}/orders")
+            val response = apiBuilder.executeRequest()
+            var itemOrders: List<Order> = Gson().fromJson(response, ItemOrders::class.java).payload.orders
+            items[0].orders = itemOrders
+            return items[0]
+        }
+
+        override fun onProgressUpdate(vararg progress: Int?) {
+            //Set to progress bar while we wait to retrieve price
+            //setProgressPercent(progress[0])
+        }
+
+        override fun onPostExecute(item: Items) {
+            val orders = item.orders
+            val filteredOrders = orders.filter { it.user.status != "offline" }
+            val cheapestOrder = filteredOrders.sortedBy { it.platinum }[0].platinum
+            currentView.text = "$cheapestOrder"
+        }
+    }
 }
 
-private class GetItemPrice : AsyncTask<Items, Int?, TextView>() {
-    override fun doInBackground(vararg urls: Items): TextView? {
+//GetItemPrice.execute(items)
 
-        var totalSize: Long = 0
-
-        return null
-    }
-
-    override fun onProgressUpdate(vararg progress: Int?) {
-        //Set to progress bar while we wait to retrieve price
-        //setProgressPercent(progress[0])
-    }
-
-    override fun onPostExecute(textView: TextView) {
-        //textView.text =
-    }
-}
 
 /*
 private fun getItemPrice(item: Items): String{
