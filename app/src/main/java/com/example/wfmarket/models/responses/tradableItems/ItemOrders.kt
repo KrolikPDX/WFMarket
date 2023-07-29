@@ -10,87 +10,28 @@ data class Orders (
 )
 
 data class Order (
-    @Json(name = "creation_date")
-    val creationDate: String,
-
-    val visible: Boolean,
-    val quantity: Long,
+    val creation_date: String? = null,
+    val visible: Boolean? = null,
+    val quantity: Long? = null,
     val user: User,
-
-    @Json(name = "last_update")
-    val lastUpdate: String,
-
-    val platinum: Long,
-
-    @Json(name = "order_type")
-    val orderType: OrderType,
-
-    val platform: Platform,
-    val id: String,
-    val region: Region
+    val last_update: String? = null,
+    val platinum: Long? = null,
+    val order_type: String? = null,
+    val platform: String? = null,
+    val id: String? = null,
+    val region: String
 )
 
-enum class OrderType(val value: String) {
-    Buy("buy"),
-    Sell("sell");
-
-    companion object {
-        public fun fromValue(value: String): OrderType = when (value) {
-            "buy"  -> Buy
-            "sell" -> Sell
-            else   -> throw IllegalArgumentException()
-        }
-    }
-}
-
-enum class Platform(val value: String) {
-    PC("pc");
-
-    companion object {
-        public fun fromValue(value: String): Platform = when (value) {
-            "pc" -> PC
-            else -> throw IllegalArgumentException()
-        }
-    }
-}
-
-enum class Region(val value: String) {
-    De("de"),
-    En("en"),
-    Ko("ko"),
-    Pt("pt"),
-    Ru("ru"),
-    Sv("sv"),
-    ZhHans("zh-hans");
-
-    companion object {
-        public fun fromValue(value: String): Region = when (value) {
-            "de"      -> De
-            "en"      -> En
-            "ko"      -> Ko
-            "pt"      -> Pt
-            "ru"      -> Ru
-            "sv"      -> Sv
-            "zh-hans" -> ZhHans
-            else      -> throw IllegalArgumentException()
-        }
-    }
-}
 
 data class User (
     val reputation: Long,
-    val locale: Region,
+    val locale: String? = null,
     val avatar: String? = null,
-
-    @Json(name = "ingame_name")
-    val ingameName: String,
-
-    @Json(name = "last_seen")
-    val lastSeen: String,
-
-    val id: String,
-    val region: Region,
-    val status: String
+    val ingame_name: String? = null,
+    val last_seen: String? = null,
+    val id: String? = null,
+    val region: String? = null,
+    val status: String? = null
 )
 
 

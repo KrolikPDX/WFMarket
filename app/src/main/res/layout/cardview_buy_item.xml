@@ -20,12 +20,20 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+            <ProgressBar
+                android:id="@+id/buyItemPriceProgressBar"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:text="placeholder"
+                android:gravity="center"
+                android:layout_gravity="right"/>
+
             <TextView
                 android:id="@+id/buyItemPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="placeholder"
                 android:gravity="center"
+                android:visibility="gone"
                 android:paddingHorizontal="10dp"
                 android:layout_gravity="right"
                 android:textStyle="bold"

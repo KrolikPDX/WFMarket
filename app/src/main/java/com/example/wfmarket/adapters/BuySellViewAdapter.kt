@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -29,7 +30,6 @@ import com.example.wfmarket.pageLogic.fragments.BuySellFragment
 import com.example.wfmarket.pageLogic.fragments.ItemDetailsFragment
 import com.example.wfmarket.pageLogic.tradableItems
 import com.google.gson.Gson
-import com.squareup.picasso.Downloader
 import com.squareup.picasso.Picasso
 import java.util.*
 
@@ -48,11 +48,13 @@ class BuySellViewAdapter(private val context: Context?, private val hostFragment
         val itemTitleView: TextView
         val imageView:ImageView
         val cardView: CardView
+        val progressBar: ProgressBar
         init {
             buyItemPrice = itemView.findViewById(R.id.buyItemPrice)
             itemTitleView = itemView.findViewById(R.id.buyItemTitle)
             imageView = itemView.findViewById(R.id.buyItemImage)
             cardView = itemView.findViewById(R.id.buyItemCardView)
+            progressBar = itemView.findViewById(R.id.buyItemPriceProgressBar)
         }
     }
 
@@ -64,22 +66,29 @@ class BuySellViewAdapter(private val context: Context?, private val hostFragment
     //OnCardView create: Add data to card view elements
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        //Set cardview itemName
         val item: Items = tradableItems.payload.items[position]
         holder.itemTitleView.text = item.item_name
+
+        //Set cardview image
         val fullImageUrl = "https://warframe.market/static/assets/${item.thumb.replace(".128x128", "")
             .replace("/thumbs", "")}"
         Picasso.get().load(fullImageUrl).into(holder.imageView)
-        holder.buyItemPrice.SetItemPrice(item)
-        //When we click on an item change current fragment to ItemDetailsFragment
+
+        //Set cardview price
+        //Only first 7 rows get unique buy price, row 8 and onward take initial value from row 1 and so on before updating
+        if (item.orders.isNullOrEmpty()) {
+            holder.buyItemPrice.setItemPrice(item, holder.progressBar) //pass holder instead?
+        } else {
+            holder.progressBar.visibility = View.GONE
+            holder.buyItemPrice.visibility = View.VISIBLE
+            holder.buyItemPrice.text = "${item.orders[0].platinum}"
+        }
+
+        //Setup onclickListener
         holder.cardView.setOnClickListener {
             changeFragmentItem(item, true)
         }
-    }
-
-    private fun TextView.SetItemPrice(item: Items) {
-        var getItemPrice = GetItemPrice()
-        getItemPrice.currentView = this
-        getItemPrice.execute(item)
     }
 
     private fun changeFragmentItem(item: Items, displayProgressBar: Boolean = false) {
@@ -126,11 +135,18 @@ class BuySellViewAdapter(private val context: Context?, private val hostFragment
         }
     }
 
-    class GetItemPrice : AsyncTask<Items, Int?, Items>() {
+    private fun TextView.setItemPrice(item: Items, progressBar: ProgressBar) {
+        var getItemPrice = SetItemPrice()
+        getItemPrice.currentView = this
+        getItemPrice.progressBar = progressBar
+        getItemPrice.execute(item)
+    }
+
+    class SetItemPrice : AsyncTask<Items, Int?, Items>() {
         public lateinit var currentView: TextView
+        public lateinit var progressBar: ProgressBar
 
         override fun doInBackground(vararg items: Items): Items {
-            Log.i(TAG, "Looking for item price ${items[0].url_name}")
             apiBuilder.setupGetRequest("https://api.warframe.market/v1/items/${items[0].url_name}/orders")
             val response = apiBuilder.executeRequest()
             var itemOrders: List<Order> = Gson().fromJson(response, ItemOrders::class.java).payload.orders
@@ -145,24 +161,19 @@ class BuySellViewAdapter(private val context: Context?, private val hostFragment
 
         override fun onPostExecute(item: Items) {
             val orders = item.orders
-            val filteredOrders = orders.filter { it.user.status != "offline" }
-            val cheapestOrder = filteredOrders.sortedBy { it.platinum }[0].platinum
-            currentView.text = "$cheapestOrder"
+            val filteredOrders = orders.filter { it.user.status != "offline" && it.order_type == "sell" }
+            if (!filteredOrders.isNullOrEmpty()) {
+                val sortedOrders = filteredOrders.sortedBy { it.platinum }
+                item.orders = sortedOrders
+                val cheapestOrder = sortedOrders[0].platinum
+                currentView.text = "$cheapestOrder"
+            } else {
+                currentView.text = "N/A"
+            }
+            currentView.visibility = View.VISIBLE
+            progressBar.visibility = View.GONE
         }
     }
 }
 
-//GetItemPrice.execute(items)
-
-
-/*
-private fun getItemPrice(item: Items): String{
-    Log.i(TAG, "Looking for item price ${item.url_name}")
-    apiBuilder.setupGetRequest("https://api.warframe.market/v1/items/${item.url_name}/orders")
-    val response = apiBuilder.executeRequest()
-    var itemOrders: List<Order> = Gson().fromJson(response, ItemOrders::class.java).payload.orders
-    Log.i(TAG, "Found item price ${itemOrders[0].platinum}")
-    return itemOrders[0].platinum.toString()
-}
-*/
 
