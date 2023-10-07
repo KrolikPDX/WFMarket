@@ -25,6 +25,7 @@
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:text="placeholder"
+                android:visibility="gone"
                 android:gravity="center"
                 android:layout_gravity="right"/>
 
@@ -33,7 +34,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:visibility="gone"
+                android:text="Placeholder"
                 android:paddingHorizontal="10dp"
                 android:layout_gravity="right"
                 android:textStyle="bold"

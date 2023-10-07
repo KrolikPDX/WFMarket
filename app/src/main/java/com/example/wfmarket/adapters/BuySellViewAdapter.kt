@@ -2,6 +2,7 @@
 
 package com.example.wfmarket.adapters
 
+import android.app.Activity
 import android.content.Context
 import android.os.AsyncTask
 import android.os.Build
@@ -36,9 +37,12 @@ import java.util.*
 
 class BuySellViewAdapter(private val context: Context?, private val hostFragment: BuySellFragment) : RecyclerView.Adapter<BuySellViewAdapter.ViewHolder>() {
 
+    lateinit var parentFragment: BuySellFragment
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         // to inflate the layout for each item of recycler view.
         val view: View = LayoutInflater.from(parent.context).inflate(R.layout.cardview_buy_item, parent, false)
+        parentFragment = (hostFragment as BuySellFragment)
         return ViewHolder(view)
     }
 
@@ -69,20 +73,29 @@ class BuySellViewAdapter(private val context: Context?, private val hostFragment
         //Set cardview itemName
         val item: Items = tradableItems.payload.items[position]
         holder.itemTitleView.text = item.item_name
-
+        holder.progressBar.visibility = View.VISIBLE
+        holder.buyItemPrice.visibility = View.GONE
         //Set cardview image
         val fullImageUrl = "https://warframe.market/static/assets/${item.thumb.replace(".128x128", "")
             .replace("/thumbs", "")}"
         Picasso.get().load(fullImageUrl).into(holder.imageView)
 
+
         //Set cardview price
-        //Only first 7 rows get unique buy price, row 8 and onward take initial value from row 1 and so on before updating
-        if (item.orders.isNullOrEmpty()) {
-            holder.buyItemPrice.setItemPrice(item, holder.progressBar) //pass holder instead?
-        } else {
+        if (item.orders.isNullOrEmpty()) { //If we do not have stored orders for current item
+            Log.i(TAG, "Enable progress bar for item ${item.item_name}")
+            holder.progressBar.visibility = View.VISIBLE
+            holder.buyItemPrice.visibility = View.GONE
+            var test = holder.buyItemPrice.setItemPrice(item, holder.progressBar)
+            var isDisplayed = parentFragment.isItemVisible(holder.itemView)
+            Log.i(TAG, "Item '${item.item_name}' is displayed = $isDisplayed")
+            //If current viewholder no longer displayed cancel get item details
+            //test.cancel(true)
+        } else { //Else we do have orders and display first (lowest) order price
+            Log.i(TAG, "Existing | Disable progress bar for item ${item.item_name}")
             holder.progressBar.visibility = View.GONE
             holder.buyItemPrice.visibility = View.VISIBLE
-            holder.buyItemPrice.text = "${item.orders[0].platinum}"
+            holder.buyItemPrice.text = "${item.orders[0].platinum}" //If there are NA price it will display incorrect value
         }
 
         //Setup onclickListener
@@ -92,16 +105,18 @@ class BuySellViewAdapter(private val context: Context?, private val hostFragment
     }
 
     private fun changeFragmentItem(item: Items, displayProgressBar: Boolean = false) {
-        if (displayProgressBar) {
-            hostFragment.displayProgressBar(View.VISIBLE) //Display loading icon
-        }
+        if (displayProgressBar) //Display loading icon
+            hostFragment.displayProgressBar(View.VISIBLE)
 
-        //Replace current fragment with new fragment(item)
-        val itemDetailsFragment = ItemDetailsFragment(item)
+        val itemDetailsFragment = ItemDetailsFragment(item) //Replace with BuySellDetailsFragment(item)
         var supportFragManager = (context as AppCompatActivity).supportFragmentManager
-        (context as HomePageLogic).searchTextbox.hideKeyboard()
+        (context as HomePageLogic).searchTextbox.hideKeyboard() //Hide keyboard just in case
+
+        //Header changes
         context.searchButton.setNavigationIcon(R.drawable.ic_search_icon)
         context.searchTextbox.visibility = View.INVISIBLE
+
+        //Change fragment to detail fragment
         supportFragManager.beginTransaction().apply {
             replace(R.id.fragmentFrame, itemDetailsFragment, "ItemDetailsFragment")
                 .addToBackStack(null) //Add to backstack to recognize supportFragManager.findFragmentByTag
@@ -135,18 +150,20 @@ class BuySellViewAdapter(private val context: Context?, private val hostFragment
         }
     }
 
-    private fun TextView.setItemPrice(item: Items, progressBar: ProgressBar) {
+    private fun TextView.setItemPrice(item: Items, progressBar: ProgressBar): SetItemPrice { //TextView extension
         var getItemPrice = SetItemPrice()
         getItemPrice.currentView = this
         getItemPrice.progressBar = progressBar
         getItemPrice.execute(item)
+        return getItemPrice
     }
 
+    //Set item price in currentView asyncly
     class SetItemPrice : AsyncTask<Items, Int?, Items>() {
         public lateinit var currentView: TextView
         public lateinit var progressBar: ProgressBar
 
-        override fun doInBackground(vararg items: Items): Items {
+        override fun doInBackground(vararg items: Items): Items { //Get price for item
             apiBuilder.setupGetRequest("https://api.warframe.market/v1/items/${items[0].url_name}/orders")
             val response = apiBuilder.executeRequest()
             var itemOrders: List<Order> = Gson().fromJson(response, ItemOrders::class.java).payload.orders
@@ -154,12 +171,10 @@ class BuySellViewAdapter(private val context: Context?, private val hostFragment
             return items[0]
         }
 
-        override fun onProgressUpdate(vararg progress: Int?) {
-            //Set to progress bar while we wait to retrieve price
-            //setProgressPercent(progress[0])
-        }
+        override fun onProgressUpdate(vararg progress: Int?) {} //Required method
 
-        override fun onPostExecute(item: Items) {
+        override fun onPostExecute(item: Items) { //Once we get orders for items filter and display price
+
             val orders = item.orders
             val filteredOrders = orders.filter { it.user.status != "offline" && it.order_type == "sell" }
             if (!filteredOrders.isNullOrEmpty()) {

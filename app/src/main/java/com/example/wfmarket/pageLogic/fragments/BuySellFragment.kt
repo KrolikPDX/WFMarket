@@ -46,7 +46,11 @@ class BuySellFragment : Fragment() {
         recyclerView.adapter = BuySellViewAdapter(this.requireContext(), this)
     }
 
-    fun refreshRecyclerView() {
+    fun isItemVisible(currentView: View):Boolean {
+        return recyclerView.layoutManager!!.isViewPartiallyVisible(currentView, false, false)
+    }
+
+    fun refreshRecyclerView() { //Used by HomePageLogic
         recyclerView.adapter!!.notifyDataSetChanged()
     }
 

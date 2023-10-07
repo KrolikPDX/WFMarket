@@ -125,7 +125,7 @@ class HomePageLogic: AppCompatActivity(){
         }
     }
 
-    //Change to set fragment to whatever use left off on
+    //Change to set fragment to what was last used
     private fun setDefaultFragment() { //Setup default fragment upon initial load
         supportFragmentManager.beginTransaction().apply {
             replace(fragmentView.id, buySellFragment, "BuySellFragment")
