@@ -9,7 +9,7 @@
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
         <LinearLayout
@@ -42,9 +42,6 @@
 
         </LinearLayout>
 
-
-
-
         <ImageView
             android:id="@+id/itemImage"
             android:layout_width="match_parent"
@@ -73,35 +70,44 @@
             android:padding="10dp"
             android:text="Item Description "
             android:textSize="20sp" />
-    </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignBottom="@id/linearLayout"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/itemsInSetText"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:gravity="center"
-            android:textAllCaps="true"
-            android:textStyle="bold"
-            android:textSize="20sp"
-            android:text="Items in set:" />
+            android:layout_height="match_parent">
 
-        <GridView
-            android:id="@+id/itemInSetGridView"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_marginVertical="10dp"
-            android:numColumns="3"
-            android:gravity="bottom"
-            android:horizontalSpacing="5dp"
-            android:verticalSpacing="5dp"
-            tools:listitem="@layout/cardview_item_in_set"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/itemsInSetText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:gravity="center"
+                    android:text="Items in set:"
+                    android:textAllCaps="true"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <GridView
+                    android:id="@+id/itemInSetGridView"
+                    android:layout_width="match_parent"
+                    android:layout_height="223dp"
+                    android:layout_marginVertical="10dp"
+                    android:gravity="bottom"
+                    android:horizontalSpacing="5dp"
+                    android:numColumns="3"
+                    android:verticalSpacing="5dp"
+                    tools:listitem="@layout/cardview_item_in_set" />
+
+                <ListView
+                    android:id="@+id/sellerListView"
+                    android:layout_width="match_parent"
+                    android:layout_height="370dp" />
+            </LinearLayout>
+        </ScrollView>
+
     </LinearLayout>
 </RelativeLayout>

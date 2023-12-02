@@ -2,9 +2,7 @@ package com.example.wfmarket.adapters
 
 import com.example.wfmarket.pageLogic.fragments.ItemDetailsFragment
 import android.content.Context
-import android.opengl.Visibility
 import android.os.Build
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,13 +18,12 @@ import com.example.wfmarket.R
 import com.example.wfmarket.helpers.hideKeyboard
 import com.example.wfmarket.models.responses.tradableItems.Items
 import com.example.wfmarket.pageLogic.HomePageLogic
-import com.example.wfmarket.pageLogic.TAG
 import com.example.wfmarket.pageLogic.fragments.AllItemsFragment
 import com.example.wfmarket.pageLogic.tradableItems
 import com.squareup.picasso.Picasso
 
 
-class AllItemsViewAdapter(private val context: Context?, private val hostFragment: AllItemsFragment) : RecyclerView.Adapter<AllItemsViewAdapter.ViewHolder>() {
+class ItemsViewAdapter(private val context: Context?, private val hostFragment: AllItemsFragment) : RecyclerView.Adapter<ItemsViewAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         // to inflate the layout for each item of recycler view.

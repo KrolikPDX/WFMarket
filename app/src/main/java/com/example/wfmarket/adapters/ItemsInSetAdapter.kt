@@ -4,7 +4,6 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AlphaAnimation
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
@@ -43,7 +42,7 @@ class ItemsInSetAdapter(private val context: Context, private val currentItem: I
                     val item = tradableItems.payload.items.find {
                         it.item_name == currentItemInSet.en.item_name
                     }!!
-                    AllItemsViewAdapter(context, AllItemsFragment()).changeFragmentItem(item)
+                    ItemsViewAdapter(context, AllItemsFragment()).changeFragmentItem(item)
                 }
             }
             itemTextView.text = currentItemInSet.en.item_name

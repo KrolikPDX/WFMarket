@@ -1,19 +1,15 @@
 package com.example.wfmarket.pageLogic.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewGroup.MarginLayoutParams
 import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.wfmarket.R
-import com.example.wfmarket.adapters.AllItemsViewAdapter
-import com.example.wfmarket.pageLogic.TAG
-import okhttp3.internal.notify
+import com.example.wfmarket.adapters.ItemsViewAdapter
 
 class AllItemsFragment : Fragment() {
     private lateinit var rootView:View
@@ -44,7 +40,7 @@ class AllItemsFragment : Fragment() {
         recyclerView = rootView.findViewById(R.id.recyclerView)
         progressBar = rootView.findViewById(R.id.progressBar)
         layoutManager = LinearLayoutManager(this.requireContext(), LinearLayoutManager.VERTICAL, false)
-        recyclerView.adapter = AllItemsViewAdapter(this.requireContext(), this)
+        recyclerView.adapter = ItemsViewAdapter(this.requireContext(), this)
     }
 
     fun refreshRecyclerView() {

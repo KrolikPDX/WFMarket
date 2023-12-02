@@ -19,11 +19,12 @@ import com.example.wfmarket.models.responses.auth.AuthSigninResponse
 import com.example.wfmarket.models.responses.auth.User
 import com.example.wfmarket.models.responses.tradableItems.TradableItems
 import com.example.wfmarket.pageLogic.fragments.AllItemsFragment
-import com.example.wfmarket.pageLogic.fragments.BuySellFragment
 import com.google.android.material.navigation.NavigationView
 import com.google.gson.Gson
 
 var user: User? = null
+
+//Add notification parameter option (i.e. if post goes up for item matching a criteria, send phone notification)
 
 class HomePageLogic: AppCompatActivity(){
     private lateinit var toolbar: Toolbar
@@ -34,7 +35,6 @@ class HomePageLogic: AppCompatActivity(){
     private lateinit var navigationView: NavigationView
 
     private lateinit var fragmentView: FrameLayout
-    private val buySellFragment = BuySellFragment()
     private val allItemsFragment = AllItemsFragment()
 
     private lateinit var navigationUserName: TextView
@@ -104,12 +104,6 @@ class HomePageLogic: AppCompatActivity(){
 
         navigationView.setNavigationItemSelectedListener {
             when (it.itemId) {
-                R.id.navigation_buySell -> {
-                    supportFragmentManager.beginTransaction().apply {
-                        replace(fragmentView.id, buySellFragment, "BuySellFragment")
-                        commit()
-                    }
-                }
                 R.id.navigation_items -> {
                     supportFragmentManager.beginTransaction().apply {
                         replace(fragmentView.id, allItemsFragment, "AllItemsFragment")
@@ -128,7 +122,7 @@ class HomePageLogic: AppCompatActivity(){
     //Change to set fragment to what was last used
     private fun setDefaultFragment() { //Setup default fragment upon initial load
         supportFragmentManager.beginTransaction().apply {
-            replace(fragmentView.id, buySellFragment, "BuySellFragment")
+            replace(fragmentView.id, allItemsFragment, "AllItemsFragment")
             commit()
         }
     }
@@ -149,8 +143,6 @@ class HomePageLogic: AppCompatActivity(){
             }
             if (supportFragmentManager.fragments[0].javaClass == AllItemsFragment::class.java) {
                 (supportFragmentManager.findFragmentByTag("AllItemsFragment") as AllItemsFragment).refreshRecyclerView()
-            } else if (supportFragmentManager.fragments[0].javaClass == BuySellFragment::class.java) {
-                (supportFragmentManager.findFragmentByTag("BuySellFragment") as BuySellFragment).refreshRecyclerView()
             }
 
             //If user pressed enter, remove whitespace and close search

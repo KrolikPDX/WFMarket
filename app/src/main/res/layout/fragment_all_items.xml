@@ -17,7 +17,6 @@
         android:layout_width="match_parent"
         android:id="@+id/textView"
         android:layout_height="wrap_content"
-        android:text="AllItemsFragment"
         android:gravity="center"
         android:textSize="30sp" />
 
