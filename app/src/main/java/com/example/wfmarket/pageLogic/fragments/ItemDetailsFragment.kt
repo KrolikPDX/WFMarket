@@ -28,7 +28,6 @@ class ItemDetailsFragment(private val item: Items) : Fragment() {
     private lateinit var itemDescription: TextView
     private lateinit var itemsInSetGrid: GridView
     private lateinit var wikiLinkButton: Button
-    private lateinit var itemsInSetText: TextView
     private lateinit var sellerListView: ListView
 
     private lateinit var itemDetailsItem: ItemDetailsItem
@@ -70,7 +69,6 @@ class ItemDetailsFragment(private val item: Items) : Fragment() {
         itemDescription = rootView.findViewById(R.id.itemDescription)
         itemsInSetGrid = rootView.findViewById(R.id.itemInSetGridView)
         wikiLinkButton = rootView.findViewById(R.id.wikiLinkButton)
-        itemsInSetText = rootView.findViewById(R.id.itemsInSetText)
         sellerListView = rootView.findViewById(R.id.sellerListView)
     }
 
@@ -97,10 +95,13 @@ class ItemDetailsFragment(private val item: Items) : Fragment() {
             startActivity(browserIntent)
         }
 
-        if (itemDetailsItem.items_in_set.size <= 1) {
-            itemsInSetText.visibility = View.INVISIBLE
+        if (itemDetailsItem.items_in_set.size > 1) {
+            itemsInSetGrid.adapter = ItemsInSetAdapter(this.requireContext(), item, itemDetailsItem)
+            //use recyclerview with a grid layout and set its height as wrap_content to get proper height
+        } else {
+            itemsInSetGrid.visibility = View.GONE
         }
-        itemsInSetGrid.adapter = ItemsInSetAdapter(this.requireContext(), item, itemDetailsItem)
+
 
         val arrayAdapter: ArrayAdapter<*>
         //arrayAdapter = SellerListViewAdapter(this.requireContext(), item)

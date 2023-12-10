@@ -39,8 +39,6 @@ class SellerListViewAdapter(val context: Context, private val item: Items) : Bas
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val view = LayoutInflater.from(context).inflate(R.layout.cardview_item_in_set, parent, false)
         Log.i(TAG, "Total orders found = $count")
-
-
         return view
     }
 

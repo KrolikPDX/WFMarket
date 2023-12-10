@@ -1,6 +1,7 @@
 package com.example.wfmarket.adapters
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import com.example.wfmarket.R
 import com.example.wfmarket.models.responses.tradableItems.ItemDetailsItem
 import com.example.wfmarket.models.responses.tradableItems.Items
 import com.example.wfmarket.models.responses.tradableItems.ItemsInSet
+import com.example.wfmarket.pageLogic.TAG
 import com.example.wfmarket.pageLogic.fragments.AllItemsFragment
 import com.example.wfmarket.pageLogic.tradableItems
 import com.squareup.picasso.Picasso
@@ -33,9 +35,9 @@ class ItemsInSetAdapter(private val context: Context, private val currentItem: I
         val currentItemInSet = itemsInSet.items_in_set[position]
         val view = LayoutInflater.from(context).inflate(R.layout.cardview_item_in_set, parent, false)
 
-        //Display items in set
-        if (itemsInSet.items_in_set.size > 1) {
-            setupViews(view)
+
+        if (itemsInSet.items_in_set.size > 1) { //Items in set also includes itself
+            setupViews(view) //Setup views used in items in set
 
             if (currentItem.item_name != currentItemInSet.en.item_name) { //Prevent clicking on self
                 cardView.setOnClickListener {
@@ -54,7 +56,8 @@ class ItemsInSetAdapter(private val context: Context, private val currentItem: I
             return view
         }
         //If there are no items to display
-        view.visibility = View.INVISIBLE
+        Log.i(TAG, "No set items to display for item ${currentItem.item_name}")
+        view.visibility = View.GONE
         return view
     }
 
