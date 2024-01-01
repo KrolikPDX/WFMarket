@@ -131,7 +131,7 @@ class HomePageLogic: AppCompatActivity(){
         apiBuilder.setupGetRequest(getItemsUrl)
         val rawResponse = apiBuilder.executeRequest()
         tradableItems = Gson().fromJson(rawResponse, TradableItems::class.java)
-        tradableItems.payload.items = tradableItems.payload.items.shuffled() //Randomize item order
+        //tradableItems.payload.items = tradableItems.payload.items.shuffled() //Randomize item order
     }
 
     private val searchTextWatcher = object : TextWatcher {

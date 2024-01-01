@@ -38,7 +38,6 @@ class ItemsInSetAdapter(private val context: Context, private val currentItem: I
 
         if (itemsInSet.items_in_set.size > 1) { //Items in set also includes itself
             setupViews(view) //Setup views used in items in set
-
             if (currentItem.item_name != currentItemInSet.en.item_name) { //Prevent clicking on self
                 cardView.setOnClickListener {
                     val item = tradableItems.payload.items.find {

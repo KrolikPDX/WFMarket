@@ -12,7 +12,6 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import com.example.wfmarket.R
 import com.example.wfmarket.adapters.ItemsInSetAdapter
-import com.example.wfmarket.adapters.SellerListViewAdapter
 import com.example.wfmarket.models.responses.tradableItems.*
 import com.example.wfmarket.pageLogic.TAG
 import com.example.wfmarket.pageLogic.apiBuilder
@@ -82,7 +81,7 @@ class ItemDetailsFragment(private val item: Items) : Fragment() {
         Picasso.get().load(fullImageUrl).into(itemImage)
 
         //Item description
-        itemDescription.text = itemInSet.en.description
+        itemDescription.text = itemInSet.en.description + "\nItems in set: ${itemDetailsItem.items_in_set.size}"
 
         //Item rarity
         if (itemInSet.rarity == null)
@@ -97,17 +96,69 @@ class ItemDetailsFragment(private val item: Items) : Fragment() {
 
         if (itemDetailsItem.items_in_set.size > 1) {
             itemsInSetGrid.adapter = ItemsInSetAdapter(this.requireContext(), item, itemDetailsItem)
+            GridViewHelper().setGridViewSize(itemsInSetGrid, 3)
             //use recyclerview with a grid layout and set its height as wrap_content to get proper height
         } else {
             itemsInSetGrid.visibility = View.GONE
         }
 
 
-        val arrayAdapter: ArrayAdapter<*>
         //arrayAdapter = SellerListViewAdapter(this.requireContext(), item)
         var array = arrayOf("Melbourne", "Vienna", "Vancouver", "Toronto", "Calgary", "Adelaide", "Perth", "Auckland", "Helsinki", "Hamburg", "Munich", "New York", "Sydney", "Paris", "Cape Town", "Barcelona", "London", "Bangkok")
 
         val adapter = ArrayAdapter(this.requireContext(), R.layout.listview_seller, array)
         sellerListView.adapter = adapter
+        ListViewHelper().setListViewSize(sellerListView)
+
+    }
+}
+
+class ListViewHelper {
+    fun setListViewSize(listView: ListView) {
+        val adapter = listView.adapter
+        if (adapter != null) {
+            var totalHeight = 0
+
+            //setting list adapter in loop tp get final size
+            for (i in 0 until adapter.count) {
+                val listItem = adapter.getView(i, null, listView)
+                listItem.measure(0, 0)
+                totalHeight += listItem.measuredHeight
+            }
+            //setting listview items in adapter
+            val params = listView.layoutParams
+            params.height = totalHeight + listView.dividerHeight * (adapter.count - 1)
+            listView.layoutParams = params
+        } else {
+            return
+        }
+    }
+}
+
+class GridViewHelper {
+    fun setGridViewSize(gridView: GridView, numColumns: Int) {
+        val adapter = gridView.adapter
+        if (adapter != null) {
+            var totalHeight = 0
+            var totalRows = 0
+            val listItem = adapter.getView(0, null, gridView) //Get first item in adapter
+            listItem.measure(0, 0) //Measure the view size
+
+            if (adapter.count % numColumns != 0) { //If total unit count isn't divisible by column count (i.e. 5/3) supplement a row
+                totalRows = adapter.count / numColumns + 1
+            } else {
+                totalRows = adapter.count / numColumns
+            }
+            totalHeight += (listItem.measuredHeight + gridView.verticalSpacing) * totalRows
+
+
+            val params = gridView.layoutParams
+
+            //Total gridview height = (total row height + spacers) rounded up to 3 / row count
+            params.height = totalHeight
+            gridView.layoutParams = params
+        } else {
+            return
+        }
     }
 }
