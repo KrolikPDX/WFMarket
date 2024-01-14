@@ -3,7 +3,6 @@ package com.example.wfmarket.pageLogic.fragments
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +12,6 @@ import androidx.fragment.app.Fragment
 import com.example.wfmarket.R
 import com.example.wfmarket.adapters.ItemsInSetAdapter
 import com.example.wfmarket.models.responses.tradableItems.*
-import com.example.wfmarket.pageLogic.TAG
 import com.example.wfmarket.pageLogic.apiBuilder
 import com.google.gson.Gson
 import com.squareup.picasso.Picasso
@@ -104,12 +102,10 @@ class ItemDetailsFragment(private val item: Items) : Fragment() {
 
 
         //arrayAdapter = SellerListViewAdapter(this.requireContext(), item)
-        var array = arrayOf("Melbourne", "Vienna", "Vancouver", "Toronto", "Calgary", "Adelaide", "Perth", "Auckland", "Helsinki", "Hamburg", "Munich", "New York", "Sydney", "Paris", "Cape Town", "Barcelona", "London", "Bangkok")
-
-        val adapter = ArrayAdapter(this.requireContext(), R.layout.listview_seller, array)
+        var activeOrders = item.orders.filter { it.user.status == "ingame" && it.order_type == "sell" }.sortedBy { it.platinum }
+        val adapter = ArrayAdapter(this.requireContext(), R.layout.listview_seller, activeOrders.map { "User: ${it.user.ingame_name} | Plat: ${it.platinum}" })
         sellerListView.adapter = adapter
         ListViewHelper().setListViewSize(sellerListView)
-
     }
 }
 
