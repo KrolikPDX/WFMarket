@@ -17,7 +17,7 @@ The goal of this project was to introduce myself to Kotlin and Android mobile ap
 ### How it works
 - Upon initial app load, an API GET request is sent to pull a list of all items available on warframe.market and is saved as a global variable for future use. 
 - SharedPreferences is checked to see if user credentials are stored, if they are display the items list page, else display the login page.
-#### Currently there are no features implemented with user authentication. In future updates, in order to make account changes / posts we will need user authentication which is why it's temporarily setup.   
+- Currently there are no features implemented with user authentication. In future updates, in order to make account changes / posts we will need user authentication which is why it's temporarily setup.   
 - On the items list page, display all the items as card views in a recycler view that were pulled from the initial GET request.
 - If a specific item is clicked, send another GET request to pull the clicked item's information, parse the retrieved information and setup a model to pass to the item details fragment.
 - The item details fragment will then display the:
